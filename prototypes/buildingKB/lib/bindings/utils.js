@@ -187,3 +187,5 @@ function highlightFilter(filter) {
   }
   selectNodes(selectedNodes)
 }
+
+console.log('hello bindings')

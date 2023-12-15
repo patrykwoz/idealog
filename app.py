@@ -1,7 +1,7 @@
 import os
 
 from functools import wraps
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, send_file
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, UserEditForm
@@ -90,6 +90,7 @@ def signup():
             return render_template('users/signup.html', form=form)
 
         do_login(user)
+        flash("Username successfully created.", 'success')
 
         return redirect("/")
 
@@ -206,13 +207,24 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of followed_users
     """
-    g.user = None
-
     if g.user:        
-        return render_template('home.html')
+        return render_template('users/home_registered.html')
 
     else:
-        return render_template('home-guest.html')
+        return render_template('home_guest.html')
+
+#######################
+# Handle files
+
+@app.route('/js/<path:filename>')
+def serve_js(filename):
+
+    return send_file(f'js/{filename}')
+
+@app.route('/prototypes/buildingKB/lib/bindings/<path:filename>')
+def serve_bindings_js(filename):
+    p=1
+    return send_file(f'prototypes/buildingKB/lib/bindings/{filename}')
 
 
 ##############################################################################
