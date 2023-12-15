@@ -20,10 +20,10 @@ class User(db.Model):
     username = db.Column(db.Text, nullable=False, unique=True)
     image_url = db.Column(db.Text)
     password = db.Column(db.Text, nullable=False)
-    type = db.Column(db.Text, nullable=False, default="registered")
+    user_type = db.Column(db.Text, nullable=False, default="registered")
 
     def __repr__(self):
-        return f"<User #{self.id}: {self.username}, {self.email}, type={self.type}>"
+        return f"<User #{self.id}: {self.username}, {self.email}, type={self.user_type}>"
 
     @classmethod
     def signup(cls, username, email, password, image_url):
@@ -183,7 +183,6 @@ class KnowledgeBase(db.Model):
     def __repr__(self):
         return f"<Knowledge Base #{self.id}: {self.name}>"
 
-
 class Tag(db.Model):
     """"""
     __tablename__='tags'
@@ -193,6 +192,79 @@ class Tag(db.Model):
     def __repr__(self):
         return f"<Tag #{self.id}: {self.name}>"
 
+class UserKnowledgeBase(db.Model):
+    """Storing relationships between users and knowledge bases"""
+    __tablename__ = 'user_knowledge_bases'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
+    knowledge_base_id = db.Column(db.Integer, db.ForeignKey('knowledge_bases.id', ondelete="CASCADE"))
+    user = db.relationship('User')
+    knowledge_base = db.relationship('KnowledgeBase')
+
+class UserKnowledgeSource(db.Model):
+    """Storing relationships between users and knowledge sources"""
+    __tablename__ = 'user_knowledge_sources'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
+    knowledge_base_id = db.Column(db.Integer, db.ForeignKey('knowledge_sources.id', ondelete="CASCADE"))
+    user = db.relationship('User')
+    knowledge_source = db.relationship('KnowledgeSource')
+
+class IdeaGroup(db.Model):
+    """Storing relationships between ideas and idea groups"""
+    __tablename__ = 'idea_groups'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    idea_id = db.Column(db.Integer, db.ForeignKey('ideas.id', ondelete="CASCADE"))
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.id', ondelete="CASCADE"))
+    idea = db.relationship('Idea')
+    group = db.relationship('Group')
+
+class Connection(db.Model):
+    """Storing connection between two different idieas"""
+    __tablename__ = 'connections'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    idea_id_1 = db.Column(db.Integer, db.ForeignKey('ideas.id', ondelete="CASCADE"))
+    idea_id_2 = db.Column(db.Integer, db.ForeignKey('ideas.id', ondelete="CASCADE"))
+    idea_1 = db.relationship('Idea', foreign_keys=[idea_id_1])
+    idea_2 = db.relationship('Idea', foreign_keys=[idea_id_2])
+
+class KnowledgeSourceKnowledgeDomain(db.Model):
+    """Storing relationships between knowledge sources and knowledge domains"""
+    __tablename__ = 'knowledge_source_knowledge_domains'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    knowledge_source_id = db.Column(db.Integer, db.ForeignKey('knowledge_sources.id', ondelete="CASCADE"))
+    knowledge_domain_id = db.Column(db.Integer, db.ForeignKey('knowledge_domains.id', ondelete="CASCADE"))
+    knowledge_source = db.relationship('KnowledgeSource')
+    knowledge_domain = db.relationship('KnowledgeDomain')
+
+class KnowledgeBaseComponents(db.Model):
+    """Storing relationships between components of a knowledge base for processing"""
+    __tablename__ = 'knowledge_base_components'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    knowledge_source_id = db.Column(db.Integer, db.ForeignKey('knowledge_sources.id', ondelete="CASCADE"))
+    knowledge_domain_id = db.Column(db.Integer, db.ForeignKey('knowledge_domains.id', ondelete="CASCADE"))
+    idea_id = db.Column(db.Integer, db.ForeignKey('ideas.id', ondelete="CASCADE"))
+    status = db.Column(db.Text, nullable=False, default="pending")
+
+    knowledge_source = db.relationship('KnowledgeSource')
+    knowledge_domain = db.relationship('KnowledgeDomain')
+    idea = db.relationship('Idea')
+
+class IdeaTag(db.Model):
+    """Storing relationships between ideas and tags"""
+    __tablename__ = 'idea_tags'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    idea_id = db.Column(db.Integer, db.ForeignKey('ideas.id', ondelete="CASCADE"))
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE"))
+    idea = db.relationship('Idea')
+    tag = db.relationship('Tag')
 
 
 def connect_db(app):

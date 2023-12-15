@@ -4,7 +4,7 @@ from functools import wraps
 from flask import Flask, render_template, request, flash, redirect, session, g
 from sqlalchemy.exc import IntegrityError
 
-# from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
+from forms import UserAddForm, LoginForm, UserEditForm
 from models import db, connect_db, User, Idea
 
 CURR_USER_KEY = "curr_user"
@@ -151,15 +151,7 @@ def users_show(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    # snagging messages in order from the database;
-    # user.messages won't be in order by default
-    messages = (Message
-                .query
-                .filter(Message.user_id == user_id)
-                .order_by(Message.timestamp.desc())
-                .limit(100)
-                .all())
-    return render_template('users/show.html', user=user, messages=messages)
+    return render_template('users/show.html', user=user)
 
 
 @app.route('/users/profile', methods=["GET", "POST"])
@@ -172,8 +164,6 @@ def profile():
         g.user.username = form.username.data
         g.user.email = form.email.data
         g.user.image_url = form.image_url.data
-        g.user.header_image_url = form.header_image_url.data
-        g.user.bio = form.bio.data
         authenticate_user = User.authenticate(form.username.data, form.password.data)
         if authenticate_user:
             db.session.commit()
