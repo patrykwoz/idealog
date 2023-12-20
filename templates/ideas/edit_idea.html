@@ -1,10 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'users/registered_user_navbar.html' %}
 
-
-{% block content %}
+{% block registered_content %}
 
   <div class="row justify-content-md-center">
-  <div class="col-md-12 col-lg-12">
+  <div class="col-md-7 col-lg-5">
     <h2 class="join-message">Join <b>Idealog</b> today.</h2>
     <form method="POST" id="user_form">
       {{ form.hidden_tag() }}
@@ -16,7 +15,7 @@
         {{ field(placeholder=field.label.text, class="form-control") }}
       {% endfor %}
 
-      <button class="btn btn-primary btn-lg btn-block">Sign me up!</button>
+      <button class="btn btn-primary btn-lg btn-block">Make Changes.</button>
     </form>
   </div>
 </div>

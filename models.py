@@ -73,9 +73,9 @@ class Idea(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    title = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text, nullable=False)
     publish_date = db.Column(db.Text, nullable=False, default = datetime.utcnow())
-    text = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=False)
     url = db.Column(db.Text, nullable=False)
 
     privacy = db.Column(db.Text, nullable=False, default="private")
@@ -83,12 +83,14 @@ class Idea(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     user = db.relationship('User', backref='ideas')
 
+    groups = db.relationship('Group', secondary='idea_groups', backref='ideas')
+
     def __repr__(self):
-        return f"<Idea #{self.id}: {self.title}>"
+        return f"<Idea #{self.id}: {self.name}>"
 
     @classmethod
     def sorted_query(self):
-        return self.query.order_by(self.title).all()
+        return self.query.order_by(self.name).all()
 
 class Group(db.Model):
     """Ideas group model."""
@@ -96,7 +98,7 @@ class Group(db.Model):
     __tablename__ = 'groups'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text, nullable=False, unique=True)
     user = db.relationship('User', backref='groups')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="user-profile-navbar">
+
+    <div class="user-object-card">
+        <p>Ideas</p>
+        <p>Count</p>
+        <a href="/ideas/new">Add New</a>
+        <a href="/ideas">Show All</a>
+    </div>
+    <div class="user-object-card">
+        <p>Idea Groups</p>
+        <p>Count</p>
+        <a href="/idea-groups/new">Add New</a>
+        <a href="/idea-groups">Show All</a>
+    </div>
+    <div class="user-object-card">
+        <p>Knowledge Sources</p>
+        <p>Count</p>
+        <a href="/knowledge-sources/new">Add New</a>
+        <a href="/knowledge-sources">Show All</a>
+    </div>
+    <div class="user-object-card">
+        <p>Knowledge Domains</p>
+        <p>Count</p>
+        <a href="/knowledge-domains/new">Add New</a>
+        <a href="/knowledge-domains">Show All</a>
+    </div>
+    <div class="user-object-card">
+        <p>Knowledge Bases</p>
+        <p>Count</p>
+        <a href="/knowledge-bases/new">Add New</a>
+        <a href="/knowledge-bases">Show All</a>
+    </div>
+
+
+</div>
+<div class="container">
+    {% block registered_content %}
+    {% endblock %}
+</div>
+
+
+
+{% endblock %}

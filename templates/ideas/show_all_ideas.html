@@ -1,0 +1,25 @@
+{% extends 'users/registered_user_navbar.html' %}
+
+{% block registered_content %}
+
+<div class="heading-container">
+    <div class="heading-line-gradient-to-right"></div>
+    <h2 class="heading-text">Your ideas.</h2>
+    <div class="heading-line-gradient-to-left"></div>
+</div>
+
+<div class="user-profile-content-container graph-container">
+    {% for idea in ideas %}
+    <div class="card-contents">
+        <a href="/ideas/{{ idea.id }}" class="card-link">
+            <p>{{ idea.name }}</p>
+        </a>
+    </div>
+
+
+    {% endfor %}
+
+</div>
+
+
+{% endblock %}
