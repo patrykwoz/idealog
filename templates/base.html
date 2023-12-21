@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
     <!-- NETWORK -->
     <script src="{{ url_for('serve_bindings_js', filename='utils.js') }}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css"
@@ -26,7 +30,7 @@
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="shortcut icon" href="{{ url_for('static', filename='idealog_favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/app.css') }}">
-        
+
 
 
     <title>Idealog</title>
@@ -38,7 +42,8 @@
             <div class="navbar-header">
                 <a href="/" class="navbar-brand">
                     <div class="navbar-logo-img-container">
-                        <img src="{{ url_for('static', filename='images/idealog_logo.png') }}" alt="Idealog Logo." class="navbar-logo-img">
+                        <img src="{{ url_for('static', filename='images/idealog_logo.png') }}" alt="Idealog Logo."
+                            class="navbar-logo-img">
                     </div>
                     <span class="navbar-logo-text">Idealog</span>
                 </a>
@@ -50,17 +55,22 @@
                 <button hidden class="idealog-btn" type="submit">Search</button>
             </form>
 
-            <a href="" class="idealog-btn">Docs</a>
+            <a href="/docs" class="idealog-btn">Docs</a>
 
             <div class="user-navigation">
-                
+
                 {% if not g.user %}
                 <a href="/signup" class="idealog-btn">Signup</a>
                 <a href="/login" class="idealog-btn">Login</a>
                 {% else %}
+                    {% if g.user.user_type=='admin' %}
+                        <a href="/admin" class="idealog-btn admin-btn">Admin</a>
+
+                    {% endif %}
+
                 <a href="">
                     <div class="navbar-user-avatar">
-                        <img src="{{ g.user.image_url }}" alt="">
+                        <img src="{{ url_for('static', filename=g.user.image_url) }}" alt="">
                     </div>
                 </a>
                 <a href="/logout" class="idealog-btn">Logout</a>
@@ -76,7 +86,6 @@
 
 
     </div>
-
 
 
     <div class="content-container container">

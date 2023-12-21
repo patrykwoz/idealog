@@ -1,0 +1,25 @@
+{% extends 'users/registered_user_navbar.html' %}
+
+{% block registered_content %}
+
+<div class="heading-container">
+    <div class="heading-line-gradient-to-right"></div>
+    <h2 class="heading-text">Your knowledge_domains.</h2>
+    <div class="heading-line-gradient-to-left"></div>
+</div>
+
+<div class="user-profile-content-container graph-container">
+    {% for knowledge_domain in knowledge_domains %}
+    <div class="card-contents">
+        <a href="/knowledge-domains/{{ knowledge_domain.id }}" class="card-link">{{ knowledge_domain.name }}</a>
+        <a href="/knowledge-domains/{{ knowledge_domain.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
+        <a href="/knowledge-domains/{{ knowledge_domain.id }}/delete"><i class="fa-regular fa-trash-can"></i></a>
+    </div>
+
+
+    {% endfor %}
+
+</div>
+
+
+{% endblock %}

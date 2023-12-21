@@ -207,13 +207,11 @@ button.idealog-btn{
     height: 50vh;
 
     border: 1px solid black;
-
     border-radius: 50px;
+
     position: relative;
 
     overflow: hidden;
-
-
 }
 
 .trending-list-container{
@@ -273,4 +271,38 @@ button.idealog-btn{
     width: 36px;
     height: auto;
     object-fit: cover;
+}
+
+.admin-btn{
+    background-color: black;
+    color: white;
+}
+
+.admin-btn:hover{
+    background-color: black;
+    color: white;
+}
+
+.user-profile-content-container{
+    width: 1200px;
+    height: 50vh;
+
+    border: 1px solid black;
+    border-radius: 15px;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+.delete-btn{
+    background-color: white;
+    border: none;
+    display: inline;
+    color:#0d6efd;
+}
+
+.delete-form{
+    display: inline;
 }

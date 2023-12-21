@@ -26,7 +26,7 @@ class User(db.Model):
         return f"<User #{self.id}: {self.username}, {self.email}, type={self.user_type}>"
 
     @classmethod
-    def signup(cls, username, email, password, image_url):
+    def signup(cls, username, email, password, image_url, user_type):
         """Sign up user.
 
         Hashes password and adds user to system.
@@ -37,7 +37,8 @@ class User(db.Model):
             username=username,
             email=email,
             password=hashed_pwd,
-            image_url=image_url
+            image_url=image_url,
+            user_type=user_type
         )
 
         db.session.add(user)
@@ -74,7 +75,7 @@ class Idea(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.Text, nullable=False)
-    publish_date = db.Column(db.Text, nullable=False, default = datetime.utcnow())
+    publish_date = db.Column(db.DateTime, nullable=False, default = datetime.utcnow())
     description = db.Column(db.Text, nullable=False)
     url = db.Column(db.Text, nullable=False)
 
@@ -138,7 +139,7 @@ class KnowledgeSource(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, nullable=False)
-    publish_date = db.Column(db.Text, nullable=False, default = datetime.utcnow())
+    publish_date = db.Column(db.DateTime, nullable=False, default = datetime.utcnow())
     text = db.Column(db.Text, nullable=False)
     url = db.Column(db.Text, nullable=False)
 

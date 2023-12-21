@@ -11,9 +11,9 @@
 <div class="user-profile-content-container graph-container">
     {% for idea in ideas %}
     <div class="card-contents">
-        <a href="/ideas/{{ idea.id }}" class="card-link">
-            <p>{{ idea.name }}</p>
-        </a>
+        <a href="/ideas/{{ idea.id }}" class="card-link">{{ idea.name }}</a>
+        <a href="/ideas/{{ idea.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="/ideas/{{ idea.id }}/delete" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
     </div>
 
 

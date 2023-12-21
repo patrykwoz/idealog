@@ -1,7 +1,7 @@
 """WTF forms for Idealog."""
-
+from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, SelectField
+from wtforms import StringField, PasswordField, TextAreaField, SelectField, SelectMultipleField, DateTimeField
 from wtforms.validators import DataRequired, Email, Length
 
 #############################################################################
@@ -41,17 +41,53 @@ class IdeaAddForm(FlaskForm):
     """Form for adding ideas."""
 
     name = StringField('Idea Name', validators=[DataRequired()])
-    publish_date = StringField('Idea Publish Date')
-    description = StringField('Idea Description', validators=[DataRequired(), Length(min=3)])
+    publish_date = DateTimeField('Idea Publish Date', default=datetime.now)
+    description = TextAreaField('Idea Description', validators=[DataRequired(), Length(min=3)])
     url = StringField('(Optional) Idea URL')
     privacy = SelectField('Idea Privacy', choices=[('private', 'Private'), ('public', 'Public')])
-    group = SelectField('Idea Group', choices=[])
+    idea_groups = SelectMultipleField('Idea Groups', choices=[],  coerce=int)
 
 
-    #############################################################################
+
+
+#############################################################################
 #GROUP MODEL FORMS
 
 class GroupAddForm(FlaskForm):
     """Form for adding idea-groups."""
 
     name = StringField('Group Name', validators=[DataRequired()])
+
+
+#############################################################################
+#KNOWLEDGE SOURCE MODEL FORMS
+
+class KnowledgeSourceAddForm(FlaskForm):
+    """Form for adding knowledge-sources."""
+
+    name = StringField('Knowledge Source Name', validators=[DataRequired()])
+    publish_date = DateTimeField('Knowledge Source Publish Date', default=datetime.now)
+    text = TextAreaField('Knowledge Source Full Text', validators=[DataRequired(), Length(min=3)])
+    url = StringField('(Optional) Knowledge Source URL')
+
+    privacy = SelectField('Knowledge Source Privacy', choices=[('private', 'Private'), ('public', 'Public')])
+
+    knowledge_domains = SelectMultipleField('Knowledge Domains', choices=[],  coerce=int)
+
+
+#############################################################################
+#KNOWLEDGE DOMAIN MODEL FORMS
+
+class KnowledgeDomainAddForm(FlaskForm):
+    """Form for adding knowledge domains."""
+
+    name = StringField('Knowledge Domain Name', validators=[DataRequired()])
+
+
+#############################################################################
+#KNOWLEDGE BASE MODEL FORMS
+
+class KnowledgeBaseAddForm(FlaskForm):
+    """Form for adding knowledge bases."""
+
+    name = StringField('Knowledge Base Name', validators=[DataRequired()])

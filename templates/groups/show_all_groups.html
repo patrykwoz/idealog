@@ -8,12 +8,12 @@
     <div class="heading-line-gradient-to-left"></div>
 </div>
 
-<div class="user-profile-content-container graph-container">
+<div class="user-profile-content-container">
     {% for group in groups %}
     <div class="card-contents">
-        <a href="/groups/{{ group.id }}" class="card-link">
-            <p>{{ group.name }}</p>
-        </a>
+        <a class="card-link">{{ group.name }}</a>
+        <a href="/groups/{{ group.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
+        <a href="/groups/{{ group.id }}/delete"><i class="fa-regular fa-trash-can"></i></a>
     </div>
 
 

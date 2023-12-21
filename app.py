@@ -4,8 +4,8 @@ from functools import wraps
 from flask import Flask, render_template, request, flash, redirect, session, g, send_file
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, UserEditForm, IdeaAddForm, GroupAddForm
-from models import db, connect_db, User, Idea, Group
+from forms import UserAddForm, LoginForm, UserEditForm, IdeaAddForm, GroupAddForm, KnowledgeSourceAddForm, KnowledgeDomainAddForm, KnowledgeBaseAddForm
+from models import db, connect_db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
 
 CURR_USER_KEY = "curr_user"
 
@@ -34,23 +34,17 @@ connect_db(app)
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
-
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
-
     else:
         g.user = None
 
-
 def do_login(user):
     """Log in user."""
-
     session[CURR_USER_KEY] = user.id
-
 
 def do_logout():
     """Logout user."""
-
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
@@ -61,22 +55,23 @@ def requires_login(view_func):
             flash("Access unauthorized.", "danger")
             return redirect("/")
         return view_func(*args, **kwargs)
+    return wrapper      
+
+def requires_admin(view_func):
+    @wraps(view_func)
+    def wrapper(*args, **kwargs):
+        if 'admin' not in g.user.user_type:
+            flash("You don't have admin level access.", "danger")
+            return redirect("/")
+        return view_func(*args, **kwargs)
     return wrapper
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
-    """Handle user signup.
-
-    Create new user and add to DB. Redirect to home page.
-
-    If form not valid, present form.
-
-    If the there already is a user with that username: flash message
-    and re-present form.
-    """
-
+    """Handle user signup. """
     form = UserAddForm()
 
+    default_profile_img = 'images/default_profile_pic.jpg'
 
     if form.validate_on_submit():
         try:
@@ -84,7 +79,8 @@ def signup():
                 username=form.username.data,
                 password=form.password.data,
                 email=form.email.data,
-                image_url=form.image_url.data or User.image_url.default.arg,
+                image_url=form.image_url.data or default_profile_img,
+                user_type=form.user_type.data
             )
             db.session.commit()
 
@@ -100,11 +96,9 @@ def signup():
     else:
         return render_template('users/signup.html', form=form)
 
-
 @app.route('/login', methods=["GET", "POST"])
 def login():
     """Handle user login."""
-
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -119,7 +113,6 @@ def login():
         flash("Invalid credentials.", 'danger')
 
     return render_template('users/login.html', form=form)
-
 
 @app.route('/logout')
 def logout():
@@ -164,7 +157,6 @@ def profile():
     """Update profile for current user."""    
     form = UserEditForm(obj=g.user)
 
-
     if form.validate_on_submit():
         g.user.username = form.username.data
         g.user.email = form.email.data
@@ -203,21 +195,21 @@ def delete_user():
 @requires_login
 def render_all_ideas():
     ideas = Idea.sorted_query()
-    return render_template('ideas/show_all_ideas.html', ideas=ideas)
+    return render_template('ideas/show_all_ideas.html', ideas=ideas, user=g.user)
 
 
 @app.route('/ideas/new', methods=["GET", "POST"])
 @requires_login
 def add_new_idea():
     form = IdeaAddForm()
-    form.group.choices = [(group.id, group.name) for group in Group.query.all()]
+    form.idea_groups.choices = [(group.id, group.name) for group in Group.query.all()]
 
     
 
     if form.validate_on_submit():
         
         try:
-            groups_choices_ids = form.group.data
+            groups_choices_ids = form.idea_groups.data
             if not isinstance(groups_choices_ids, list):
                 groups_choices_ids = [groups_choices_ids]
 
@@ -233,6 +225,7 @@ def add_new_idea():
                 url=form.url.data,
                 privacy=form.privacy.data,
                 groups=groups,
+                user_id=g.user.id
             )
             
 
@@ -246,6 +239,62 @@ def add_new_idea():
 
     return render_template('ideas/new_idea.html', form=form)
 
+@app.route('/ideas/<int:idea_id>/edit', methods=["GET", "POST"])
+@requires_login
+def edit_idea(idea_id):
+    idea = Idea.query.get_or_404(idea_id)
+
+    form = IdeaAddForm(obj=idea)
+
+    form.idea_groups.choices = [(group.id, group.name) for group in Group.query.all()]
+
+    #form.idea_groups.data = [group.id for group in idea.groups]
+
+    if form.validate_on_submit():
+        groups_choices_ids = form.idea_groups.data
+        if not isinstance(groups_choices_ids, list):
+                groups_choices_ids = [groups_choices_ids]
+
+        groups = Group.query.filter(Group.id.in_(groups_choices_ids)).all()
+        if len(groups) != len(groups_choices_ids):
+            flash("One or more selected groups do not exist.", "danger")
+            return render_template('ideas/new_idea.html', form=form)
+
+
+
+        idea.name = form.name.data
+        idea.description = form.description.data
+        idea.publish_date = form.publish_date.data
+        idea.url = form.url.data
+        idea.groups = groups
+        idea.privacy = form.privacy.data
+
+        try:
+            db.session.commit()
+        except(e):
+            flash(f"Something went wrong. Here's your error: {e}", "danger")
+        return redirect("/ideas")
+
+    return render_template('ideas/edit_idea.html', form=form)
+
+@app.route('/ideas/<int:idea_id>', methods=["GET"])
+@requires_login
+def detail_idea(idea_id):
+    idea = Idea.query.get_or_404(idea_id)
+
+
+    return render_template('ideas/detail_idea.html', idea=idea)
+
+
+@app.route('/ideas/<int:idea_id>/delete', methods=["POST"])
+@requires_login
+def delete_idea(idea_id):
+    idea = Idea.query.get_or_404(idea_id)
+    db.session.delete(idea)
+    db.session.commit()
+
+    return redirect('/ideas')
+
 
 ##############################################################################
 # General Group web routes (web pages).
@@ -253,10 +302,11 @@ def add_new_idea():
 @requires_login
 def render_all_groups():
     groups = Group.query.all()
-    return render_template('groups/show_all_groups.html', groups=groups)
+    return render_template('groups/show_all_groups.html', groups=groups, user=g.user)
 
 @app.route('/idea-groups/new', methods=["GET", "POST"])
 @requires_login
+@requires_admin
 def add_new_group():
     form = GroupAddForm()
 
@@ -282,24 +332,111 @@ def add_new_group():
 
     return render_template('groups/new_group.html', form=form)
 
+##############################################################################
+# General KNOWLEDGE SOURCE web routes (web pages).
+@app.route('/knowledge-sources', methods=["GET"])
+@requires_login
+def render_all_knowledge_sources():
+    knowledge_sources = KnowledgeSource.query.all()
+    return render_template('knowledge_sources/show_all_knowledge_sources.html', knowledge_sources=knowledge_sources)
+
+@app.route('/knowledge-sources/new', methods=["GET", "POST"])
+@requires_login
+def add_new_knowledge_source():
+    form = KnowledgeSourceAddForm()
+    form.knowledge_domains.choices = [(knowledge_domain.id, knowledge_domain.name) for knowledge_domain in KnowledgeDomain.query.all()]
+
+    if form.validate_on_submit():
+        
+        try:
+            knowledge_domain_choices_ids = form.knowledge_domains.data
+            if not isinstance(knowledge_domains_choices_ids, list):
+                knowledge_domains_choices_ids = [knowledge_domains_choices_ids]
+
+            knowledge_domains = KnowledgeDomain.query.filter(KnowledgeDomain.id.in_(knowledge_domains_choices_ids)).all()
+            if len(knowledge_domains) != len(knowledge_domains_choices_ids):
+                flash("One or more selected knowledge_domains do not exist.", "danger")
+                return render_template('knwoledge_srouce/new_knowledge_source.html', form=form)
+
+            knowledge_source = KnowledgeSource(
+                name=form.name.data,
+                publish_date=form.publish_date.data,
+                text=form.text.data,
+                url=form.url.data,
+                privacy=form.privacy.data,
+                knowledge_domains=knowledge_domains,
+                user_id=g.user.id
+            )
+            
+
+            db.session.add(knowledge_source)
+            db.session.commit()
+            flash("Successfully added a new idea.", "success")
+        except Exception as e:
+            flash(f"Something went wrong. Here's your error: {e}", "danger")
+
+        return redirect("/knowledge_sources")
+
+    return render_template('knowledge_sources/new_knowledge_source.html', form=form)
+
+##############################################################################
+# General KNOWLEDGE DOMAIN web routes (web pages).
+
+@app.route('/knowledge-domains', methods=["GET"])
+@requires_login
+def render_all_knowledge_domains():
+    knowledge_domains = KnowledgeDomain.query.all()
+    return render_template('knowledge_domains/show_all_knowledge_domains.html', knowledge_domains=knowledge_domains)
+
+@app.route('/knowledge-domains/new', methods=["GET", "POST"])
+@requires_login
+@requires_admin
+def add_new_knowledge_domain():
+    form = KnowledgeDomainAddForm()
+
+    if form.validate_on_submit():
+        
+        try:
+
+            knowledge_domain = KnowledgeDomain(
+                name=form.name.data,
+                user_id = g.user.id
+            )
+            
+
+            db.session.add(knowledge_domain)
+            db.session.commit()
+            flash("Successfully added a new knowledge_domain.", "success")
+        except Exception as e:
+            flash(f"Something went wrong. Here's your error: {e}", "danger")
+
+        return redirect("/knowledge-domains")
+
+    return render_template('knowledge_domains/new_knowledge_domain.html', form=form)
 
 
 ##############################################################################
 # Homepage
 
-
 @app.route('/')
 def homepage():
-    """Show homepage:
-
-    - anon users: no messages
-    - logged in: 100 most recent messages of followed_users
-    """
-    if g.user:        
-        return render_template('users/registered_home.html')
+    """Show homepage.  """
+    if g.user:
+        user=g.user        
+        return render_template('users/registered_home.html', user=user)
 
     else:
         return render_template('home_guest.html')
+
+##############################################################################
+# Docs page
+
+@app.route('/docs')
+def documentation_page():
+    """Show docs page."""
+
+    return render_template('docs/index.html')
+
 
 #######################
 # Handle files
@@ -325,6 +462,16 @@ def unauthorized(error):
 def page_not_found(error):
     return render_template('404.html'), 404
 
+
+##############################################################################
+# Admin Pages
+
+@app.route('/admin')
+@requires_login
+@requires_admin
+def render_admin_index():
+
+    return render_template('admin/index.html')
 
 ##############################################################################
 # Turn off all caching in Flask
