@@ -267,7 +267,7 @@ def from_url_to_kb(url):
     }
     kb = from_text_to_kb(article.text, article.url, **config)
     return kb
-
+ 
 def get_news_links(query, lang="en", region="US", pages=1, max_links=100000):
     googlenews = GoogleNews(lang=lang, region=region)
     googlenews.search(query)
@@ -289,81 +289,28 @@ def from_urls_to_kb(urls, verbose=False):
             kb.merge_with_kb(kb_url)
         except ArticleException:
             if verbose:
-                print(f"  Couldn't download article at url {url}")
+                print(f"Couldn't download article at url {url}")
     return kb
 
-def save_network_html(kb, filename="network.html"):
-    # create network
-    net = Network(directed=True, width="700px", height="700px", bgcolor="#eeeeee")
+def from_idea_to_kb(idea):
+    config = {
+        "article_title": idea.title,
+        "article_publish_date": idea.publish_date
+    }
+    kb = from_text_to_kb(idea.text, idea.url, **config)
+    return kb
 
-    # nodes
-    color_entity = "#00FF00"
-    for e in kb.entities:
-        net.add_node(e, shape="circle", color=color_entity)
-
-    # edges
-    for r in kb.relations:
-        net.add_edge(r["head"], r["tail"],
-                    title=r["type"], label=r["type"])
-        
-    # save network
-    net.repulsion(
-        node_distance=200,
-        central_gravity=0.2,
-        spring_length=200,
-        spring_strength=0.05,
-        damping=0.09
-    )
-    net.set_edge_smooth('dynamic')
-    net.show(name=filename, notebook=False)
-
-def write_net_html(kb, filename="graph.html"):
-    # create network
-    net = Network(directed=True, width="700px", height="700px", bgcolor="#eeeeee")
-
-    # nodes
-    color_entity = "#00FF00"
-    for e in kb.entities:
-        net.add_node(e, shape="circle", color=color_entity)
-
-    # edges
-    for r in kb.relations:
-        net.add_edge(r["head"], r["tail"],
-                    title=r["type"], label=r["type"])
-        
-    # save network
-    net.repulsion(
-        node_distance=200,
-        central_gravity=0.2,
-        spring_length=200,
-        spring_strength=0.05,
-        damping=0.09
-    )
-    net.set_edge_smooth('dynamic')
-    net.write_html(name=filename, notebook=False)
-
-def generate_net(kb):
-    # create network
-    net = Network(directed=True, width="700px", height="700px", bgcolor="#eeeeee")
-
-    # nodes
-    color_entity = "#00FF00"
-    for e in kb.entities:
-        net.add_node(e, shape="circle", color=color_entity)
-
-    # edges
-    for r in kb.relations:
-        net.add_edge(r["head"], r["tail"],
-                    title=r["type"], label=r["type"])
-        
-    # save network
-    net.repulsion(
-        node_distance=200,
-        central_gravity=0.2,
-        spring_length=200,
-        spring_strength=0.05,
-        damping=0.09
-    )
-    net.set_edge_smooth('dynamic')
-    return net
-
+def from_ideas_to_kb(ideas, verbose=False):
+    kb = KB()
+    if verbose:
+        print(f"{len(ideas)} ideas to visit")
+    for idea in ideas:
+        if verbose:
+            print(f"Visiting idea: {idea.name}...")
+        try:
+            kb_idea = from_idea_to_kb(idea)
+            kb.merge_with_kb(kb_idea)
+        except ArticleException:
+            if verbose:
+                print(f"Couldn't process the idea: {idea.name}")
+    return kb
