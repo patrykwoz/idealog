@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container card-header">List of public ideas</div>
+<div class="list-group container">
+    {% if ideas | length <= 0 %}
+    <div class="list-group-item list-group-item-action">
+        <div>Nothing Found.</div>
+    </div>
+    {% else %}
+    {% for idea in ideas %}
+    <div class="list-group-item list-group-item-action">
+        <a href="/ideas/{{ idea.id }}">{{ idea.name }}</a>
+        <a href="/ideas/{{ idea.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="/ideas/{{ idea.id }}/delete" method="post" class="delete-form"><button class="delete-btn"><i
+                    class="fa-regular fa-trash-can"></i></button></form>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<div class="container card-header">List of public groups</div>
+<div class="list-group container">
+    {% if groups | length <= 0 %}
+    <div class="list-group-item list-group-item-action">
+        <div>Nothing Found.</div>
+    </div>
+    {% else %}
+    {% for group in groups %}
+    <div class="list-group-item list-group-item-action">
+        <a href="/idea-groups/{{ group.id }}">{{ group.name }}</a>
+        <a href="/idea-groups/{{ group.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="/idea-groups/{{ group.id }}/delete" method="post" class="delete-form"><button
+                class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<div class="container card-header">List of public knowledge sources</div>
+<div class="list-group container">
+    {% if knowledge_sources | length <= 0 %}
+    <div class="list-group-item list-group-item-action">
+        <div>Nothing Found.</div>
+    </div>
+    {% else %}
+    {% for knowledge_source in knowledge_sources %}
+    <div class="list-group-item list-group-item-action">
+        <a href="/knowledge-sources/{{ knowledge_source.id }}">{{
+            knowledge_source.name }}</a>
+        <a href="/knowledge-sources/{{ knowledge_source.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="/knowledge-sources/{{ knowledge_source.id }}/delete" method="post" class="delete-form"><button
+                class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<div class="container card-header">List of public knowledge domains</div>
+<div class="list-group container">
+    {% if knowledge_domains | length <= 0 %}
+    <div class="list-group-item list-group-item-action">
+        <div>Nothing Found.</div>
+    </div>
+    {% else %}
+    {% for knowledge_domain in knowledge_domains %}
+    <div class="list-group-item list-group-item-action">
+        <a href="/knowledge-domains/{{ knowledge_domain.id }}">{{
+            knowledge_domain.name }}</a>
+        <a href="/knowledge-domains/{{ knowledge_domain.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="/knowledge-domains/{{ knowledge_domain.id }}/delete" method="post" class="delete-form"><button
+                class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<div class="container card-header">List of public knowledge bases</div>
+<div class="list-group container">
+    {% if knowledge_bases | length <= 0 %}
+    <div class="list-group-item list-group-item-action">
+        <div>Nothing Found.</div>
+    </div>
+    {% else %}
+    {% for knowledge_base in knowledge_bases %}
+    <div class="list-group-item list-group-item-action">
+        <a href="/knowledge-bases/{{ knowledge_base.id }}">{{
+            knowledge_base.name }}</a>
+        <a href="/knowledge-bases/{{ knowledge_base.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="/knowledge-bases/{{ knowledge_base.id }}/delete" method="post" class="delete-form"><button
+                class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'users/registered_user_navbar.html' %}
+
+{% block registered_content %}
+
+<div class="heading-container">
+    <div class="heading-line-gradient-to-right"></div>
+    <h2 class="heading-text">Knowledge domain details.</h2>
+    <div class="heading-line-gradient-to-left"></div>
+</div>
+
+<div class="user-profile-content-container">
+    <p>Name: {{ knowledge_domain.name }}</p>
+    <a href="/knowledge-domains/{{ knowledge_domain.id }}/edit" class="btn btn-outline-secondary btn-sm">Edit</i></a>
+    <form action="/knowledge-domains/{{ knowledge_domain.id }}/delete" method="post"><button class="btn btn-outline-secondary btn-sm">Delete</button></form>
+
+    <h3>Knowledge Sources in the Knowledge Domain:</h3>
+    <ul>
+        {% for knowledge_source in knowledge_domain.knowledge_sources %}
+        <li><a href="/knowledge-sources/{{ knowledge_source.id }}">{{ knowledge_source.name }}</a></li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+
+{% endblock %}

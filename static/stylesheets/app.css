@@ -1,0 +1,318 @@
+:root {
+    --main-color: black;
+    --link-color: #fff200;
+
+    --font-size: 16px;
+    --font-size-content-heading: 75px;
+
+    --centered-container-width: 70%;
+
+    --movable-padding-left: 0px;
+    --movable-padding-right: 0;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    font-family: 'DM Mono';
+}
+
+body{
+    overflow-x: hidden;
+}
+
+
+.idealog-btn{
+    width: 80px;
+    height: 36px;
+
+    border: 2px solid black;
+    border-radius: 9999px;
+    color: black;
+    background-color: white;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+}
+
+button.idealog-btn{
+    display: block;
+    padding: 0 10px 0 10px;
+    width: 80px;
+    height: 36px;
+
+}
+
+.idealog-btn:hover{
+    border: 4px solid var(--link-color);
+    color: black;
+    background-color: white;
+    
+}
+
+.search-idealog{
+    width: 450px;
+    font-size: 12px;
+}
+
+
+.navbar{
+    width: 100vw;
+
+    display: flex;
+    align-items: center;
+
+}
+
+.container{
+    width: 1200px;
+    padding: 0;
+
+}
+
+
+
+.navbar-header a{
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-header a:hover .navbar-logo-img-container{
+    border: 4px solid var(--link-color);
+
+}
+
+.navbar-logo-img-container{
+    width: 36px;
+    height: 36px;
+
+    background-color: black;
+
+    border: 4px solid black;
+    border-radius: 50%;
+
+    margin-right: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* background: radial-gradient(circle at center, black, transparent); */
+    /* box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5); */
+    /* background-color: rgb(236, 236, 236); */
+}
+
+
+
+.navbar-logo-img{
+    width: 36px;
+    height: auto;
+    
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+}
+
+.navbar-logo-text{
+    font-weight: 600;
+
+}
+
+.user-navigation{
+    display: flex;
+}
+
+.user-navigation a{
+    display: flex;
+    justify-content: center;
+
+
+    width: 80px;
+    height: 36px;
+
+    margin-left: 5px;
+
+}
+
+
+.navbar-user-avatar{
+    display: block;
+
+
+    width: 42px;
+    height: 42px;
+
+    border: 2px solid black;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+}
+
+.navbar-user-avatar:hover{
+    border: 4px solid var(--link-color);
+}
+
+.navbar-user-avatar img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+}
+
+.content-container{
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heading-container{
+    width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 15px 0 30px 0;
+    
+}
+
+.heading-container h2{
+    font-size: 18px;
+    width: 900px;
+    margin: 0 10px 0 10px;
+    padding: 0;
+    text-align: center;
+
+}
+.heading-line-gradient-to-right{
+    height: 1px;
+    width: 100%;
+    background-color: black;
+    /* background: linear-gradient(to right, white, grey); */
+}
+
+.heading-line-gradient-to-left{
+    height: 1px;
+    width: 100%;
+    background-color: black;
+    /* background: linear-gradient(to left, white, grey); */
+}
+
+
+.graph-container{
+    width: 1200px;
+    height: 50vh;
+
+    border: 1px solid black;
+    border-radius: 50px;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.trending-list-container{
+    width: 1200px;
+    height: 25vh;
+
+    margin-bottom: 50px;
+
+    border: 1px solid black;
+
+    border-radius: 50px;
+
+}
+
+/*USER PROFILE NAVBAR*/
+.user-profile-navbar{
+    height: 250px;
+    width: 1200px;
+    display: flex;
+    gap:9px;
+    align-items: center;
+    justify-content:space-between;
+    margin: 15px 0 30px 0;
+
+
+}
+
+.user-object-card{
+    height: 250px;
+    width: 100%;
+
+    padding: 5px;
+
+    border: 1px solid black;
+    border-radius: 15px;
+}
+
+/* NETWORK STYLES */
+
+.card{
+    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    z-index: 0;
+
+}
+#mynetwork {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    
+    float: left;
+}
+
+.card-image{
+    width: 36px;
+    height: auto;
+    object-fit: cover;
+}
+
+.admin-btn{
+    background-color: black;
+    color: white;
+}
+
+.admin-btn:hover{
+    background-color: black;
+    color: white;
+}
+
+.user-profile-content-container{
+    width: 1200px;
+    height: 50vh;
+
+    padding: 5px;
+
+    border: 1px solid black;
+    border-radius: 15px;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.delete-btn{
+    background-color: white;
+    border: none;
+    display: inline;
+    color:#0d6efd;
+}
+
+.delete-form{
+    display: inline;
+}

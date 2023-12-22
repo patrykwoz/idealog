@@ -1,0 +1,26 @@
+{% extends 'users/registered_user_navbar.html' %}
+
+{% block registered_content %}
+
+<div class="heading-container">
+    <div class="heading-line-gradient-to-right"></div>
+    <h2 class="heading-text">Group details</h2>
+    <div class="heading-line-gradient-to-left"></div>
+</div>
+
+<div class="user-profile-content-container">
+    <p>Name: {{ group.name }}</p>
+    <a href="/idea-groups/{{ group.id }}/edit" class="btn btn-outline-secondary btn-sm">Edit</i></a>
+    <form action="/idea-groups/{{ group.id }}/delete" method="post"><button class="btn btn-outline-secondary btn-sm">Delete</button></form>
+
+    <h3>Ideas in the Group:</h3>
+    <ul>
+        {% for idea in group.ideas %}
+        <li><a href="/ideas/{{ idea.id }}">{{ idea.name }}</a></li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+
+{% endblock %}

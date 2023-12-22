@@ -1,0 +1,6 @@
+email,username,image_url,password,user_type
+raymond02@example.org,twalter,https://randomuser.me/api/portraits/women/7.jpg,mypass,admin
+navarrotimothy@example.org,karen62,https://randomuser.me/api/portraits/men/23.jpg,mypass,admin
+ywilliams@example.com,martinamanda,https://randomuser.me/api/portraits/men/85.jpg,mypass,admin
+dennis79@example.net,christopherwheeler,https://randomuser.me/api/portraits/men/48.jpg,mypass,admin
+ericadiaz@example.com,andreabrown,https://randomuser.me/api/portraits/women/5.jpg,mypass,admin
