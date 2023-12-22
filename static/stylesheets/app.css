@@ -17,6 +17,10 @@
     font-family: 'DM Mono';
 }
 
+body{
+    overflow-x: hidden;
+}
+
 
 .idealog-btn{
     width: 80px;
@@ -177,7 +181,7 @@ button.idealog-btn{
     align-items: center;
     justify-content: center;
 
-    margin: 45px 0 30px 0;
+    margin: 15px 0 30px 0;
     
 }
 
@@ -244,6 +248,9 @@ button.idealog-btn{
 .user-object-card{
     height: 250px;
     width: 100%;
+
+    padding: 5px;
+
     border: 1px solid black;
     border-radius: 15px;
 }
@@ -288,6 +295,8 @@ button.idealog-btn{
 .user-profile-content-container{
     width: 1200px;
     height: 50vh;
+
+    padding: 5px;
 
     border: 1px solid black;
     border-radius: 15px;

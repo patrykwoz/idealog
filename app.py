@@ -166,21 +166,10 @@ def profile():
 @requires_login
 @requires_admin
 def list_users():
-    """Page with listing of users.
-
-    Can take a 'q' param in querystring to search by that username.
-    """
-
-    search = request.args.get('q')
-
-    if not search:
-        users = User.query.all()
-    else:
-        users = User.query.filter(User.username.like(f"%{search}%")).all()
+    """Page with listing of users.    """
+    users = User.query.all()
 
     return render_template('users/show_all_users.html', users=users)
-
-
 
 @app.route('/users/new', methods=["GET","POST"])
 @requires_login
@@ -188,11 +177,9 @@ def list_users():
 def new_user():
     """Handle user signup. """
     form = UserAddForm()
-
     default_profile_img = 'images/default_profile_pic.jpg'
 
     if form.validate_on_submit():
-
         try:
             user = User.signup(
                 username=form.username.data,
@@ -215,10 +202,8 @@ def new_user():
         flash("Username successfully created.", 'success')
 
         return redirect("/users")
-
     else:
         return render_template('users/new_user.html', form=form)
-
 
 @app.route('/users/<int:user_id>/edit', methods=["GET","POST"])
 @requires_login
@@ -235,13 +220,10 @@ def edit_user(user_id):
 
         db.session.commit()
         flash("Succesffully saved changes.", "success")
-        
+
         return redirect(f"/users/{user_id}")
 
-
     return render_template("users/edit_user.html", form=form, user=user)
-
-
 
 @app.route('/users/<int:user_id>/delete', methods=["POST"])
 @requires_login
