@@ -10,7 +10,7 @@
 
 <div class="user-profile-content-container">
     <p>Name: {{ idea.name }}</p>
-    <a href="/ideas/{{ idea.id }}/edit">Edit</i></a>
+    <a href="/ideas/{{ idea.id }}/edit" class="btn btn-outline-secondary btn-sm">Edit</i></a>
     <form action="/ideas/{{ idea.id }}/delete" method="post"><button class="btn btn-outline-secondary btn-sm">Delete</button></form>
     <p>Description: {{ idea.description }}</p>
     <p>Published date: {{ idea.published_date }}</p>

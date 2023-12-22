@@ -3,7 +3,7 @@
 {% block content %}
 
   <div class="row justify-content-md-center">
-    <div class="col-md-4">
+    <div class="col-md-12">
       <h2 class="join-message">Edit Your Profile.</h2>
       <form method="POST" id="user_form">
         {{ form.hidden_tag() }}
@@ -15,7 +15,6 @@
           {{ field(placeholder=field.label.text, class="form-control") }}
         {% endfor %}
 
-        <p>To confirm changes, enter your password:</p>
         {% if form.password.errors %}
           {% for error in form.password.errors %}
             <span class="text-danger">
@@ -23,11 +22,11 @@
           </span>
           {% endfor %}
         {% endif %}
-        {{ form.password(placeholder="Enter your password to confirm", class="form-control") }}
+        {{ form.password(placeholder="Enter a new password.", class="form-control") }}
 
         <div class="edit-btn-area">
           <button class="btn btn-success">Edit this user!</button>
-          <a href="/users/{{ user_id }}" class="btn btn-outline-secondary">Cancel</a>
+          <a href="/users" class="btn btn-outline-secondary">Cancel</a>
         </div>
       </form>
     </div>

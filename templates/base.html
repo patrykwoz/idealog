@@ -49,8 +49,8 @@
                 </a>
             </div>
 
-            <form class="d-flex" role="search">
-                <input class="form-control me-2 search-idealog" type="search"
+            <form class="d-flex" role="search" action="/search" method="get">
+                <input class="form-control me-2 search-idealog" type="search" name="home-query"
                     placeholder="Search ideas, knowledge sources, knowledge graphs..." aria-label="Search">
                 <button hidden class="idealog-btn" type="submit">Search</button>
             </form>
@@ -63,16 +63,18 @@
                 <a href="/signup" class="idealog-btn">Signup</a>
                 <a href="/login" class="idealog-btn">Login</a>
                 {% else %}
-                    {% if g.user.user_type=='admin' %}
-                        <a href="/admin" class="idealog-btn admin-btn">Admin</a>
+                {% if g.user.user_type=='admin' %}
+                <a href="/admin" class="idealog-btn admin-btn">Admin</a>
 
-                    {% endif %}
+                {% endif %}
 
-                <a href="">
+                <a href="/users/profile">
                     <div class="navbar-user-avatar">
-                        <img src="{{ url_for('static', filename=g.user.image_url) }}" alt="">
+                        <img src="{% if g.user.image_url.startswith('images') %}{{ url_for('static', filename=g.user.image_url) }}{% else %}{{ g.user.image_url }}{% endif %}"
+                            alt="User profile image.">
                     </div>
                 </a>
+
                 <a href="/logout" class="idealog-btn">Logout</a>
                 {% endif %}
             </div>

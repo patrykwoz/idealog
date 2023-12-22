@@ -43,6 +43,14 @@ class User(db.Model):
 
         db.session.add(user)
         return user
+    
+    @classmethod
+    def hash_existing(cls, password):
+        """Hash password for an existing user"""
+        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
+
+        return hashed_pwd
+
 
     @classmethod
     def authenticate(cls, username, password):
@@ -147,6 +155,8 @@ class KnowledgeSource(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     user = db.relationship('User', backref='knowledge_sources')
+
+    knowledge_domains = db.relationship('KnowledgeDomain', secondary='knowledge_source_knowledge_domains', backref='knowledge_sources')
 
     def __repr__(self):
         return f"<Knowledge Source #{self.id}: {self.name}>"

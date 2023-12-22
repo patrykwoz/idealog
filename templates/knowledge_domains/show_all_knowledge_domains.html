@@ -13,7 +13,7 @@
     <div class="card-contents">
         <a href="/knowledge-domains/{{ knowledge_domain.id }}" class="card-link">{{ knowledge_domain.name }}</a>
         <a href="/knowledge-domains/{{ knowledge_domain.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
-        <a href="/knowledge-domains/{{ knowledge_domain.id }}/delete"><i class="fa-regular fa-trash-can"></i></a>
+        <form action="/knowledge-domains/{{ knowledge_domain.id }}/delete" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
     </div>
 
 

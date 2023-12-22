@@ -5,35 +5,36 @@
 <div class="user-profile-navbar">
 
     <div class="user-object-card">
-        <p>Ideas</p>
+        <p><i class="fa-regular fa-lightbulb"></i> Ideas</p>
         <p>Count: {{ g.user.ideas | length }}</p>
         <a class="btn btn-outline-secondary btn-sm" href="/ideas/new">Add New</a>
         <a class="btn btn-outline-secondary btn-sm" href="/ideas">Show All</a>
     </div>
     <div class="user-object-card">
-        <p>Idea Groups</p>
+        <p><i class="fa-solid fa-layer-group"></i> Idea Groups</p>
         <p>Count: {{ g.user.groups | length }}</p>
         <a class="btn btn-outline-secondary btn-sm" href="/idea-groups/new">Add New</a>
         <a class="btn btn-outline-secondary btn-sm" href="/idea-groups">Show All</a>
     </div>
     <div class="user-object-card">
-        <p>Knowledge Sources</p>
+        <p><i class="fa-solid fa-book"></i> Knowledge Sources</p>
         <p>Count: {{ g.user.knowledge_sources | length }}</p>
         <a class="btn btn-outline-secondary btn-sm" href="/knowledge-sources/new">Add New Manually</a>
-        <a class="btn btn-outline-secondary btn-sm" href="/knowledge-sources/new-from-internet">Add New From Internet</a>
-        <a class="btn btn-outline-secondary btn-sm" href="/knowledge-sources/new-from-files">Add New From File</a>
+        <a class="btn btn-outline-secondary btn-sm" href="/knowledge-sources/new-from-internet">Add New From Internet <i class="fa-solid fa-robot"></i></a>
+        <a class="btn btn-outline-secondary btn-sm" href="/knowledge-sources/new-from-files">Add New From File(s) <i class="fa-solid fa-robot"></i></a>
         <a class="btn btn-outline-secondary btn-sm" href="/knowledge-sources">Show All</a>
     </div>
     <div class="user-object-card">
-        <p>Knowledge Domains</p>
+        <p><i class="fa-solid fa-lines-leaning"></i> Knowledge Domains</p>
         <p>Count: {{ g.user.knowledge_domains | length }}</p>
         <a class="btn btn-outline-secondary btn-sm" href="/knowledge-domains/new">Add New</a>
         <a class="btn btn-outline-secondary btn-sm" href="/knowledge-domains">Show All</a>
     </div>
     <div class="user-object-card">
-        <p>Knowledge Bases</p>
+        <p><i class="fa-solid fa-brain"></i> Knowledge Bases</p>
         <p>Count: {{ g.user.knowledge_bases | length }}</p>
         <a class="btn btn-outline-secondary btn-sm" href="/knowledge-bases/new">Add New</a>
+        <a class="btn btn-outline-secondary btn-sm" href="/knowledge-bases/merge">Merge</a>
         <a class="btn btn-outline-secondary btn-sm" href="/knowledge-bases">Show All</a>
     </div>
 
