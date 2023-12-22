@@ -42,7 +42,7 @@ class IdeaAddForm(FlaskForm):
 
     name = StringField('Idea Name', validators=[DataRequired()])
     publish_date = DateTimeField('Idea Publish Date', default=datetime.now)
-    description = TextAreaField('Idea Description', validators=[DataRequired(), Length(min=3)])
+    text = TextAreaField('Idea Description', validators=[DataRequired(), Length(min=3)])
     url = StringField('(Optional) Idea URL')
     privacy = SelectField('Idea Privacy', choices=[('private', 'Private'), ('public', 'Public')])
     idea_groups = SelectMultipleField('Idea Groups', choices=[],  coerce=int)
@@ -91,3 +91,8 @@ class KnowledgeBaseAddForm(FlaskForm):
     """Form for adding knowledge bases."""
 
     name = StringField('Knowledge Base Name', validators=[DataRequired()])
+
+    ideas = SelectMultipleField('Ideas', choices=[],  coerce=int)
+    idea_groups = SelectMultipleField('Idea Groups', choices=[],  coerce=int)
+    knowledge_sources = SelectMultipleField('Knowledge Sources', choices=[],  coerce=int)
+    knowledge_domains = SelectMultipleField('Knowledge Domains', choices=[],  coerce=int)

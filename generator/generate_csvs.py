@@ -12,7 +12,7 @@ from datetime import datetime
 MAX_IDEA_LENGTH = 140
 
 USERS_CSV_HEADERS = ['email', 'username', 'image_url', 'password', 'user_type']
-IDEAS_CSV_HEADERS = ['name', 'description', 'publish_date', 'url', 'privacy', 'user_id']
+IDEAS_CSV_HEADERS = ['name', 'text', 'publish_date', 'url', 'privacy', 'user_id']
 GROUPS_CSV_HEADERS = ['name']
 KNOWLEDGE_SOURCES_CSV_HEADERS = ['name', 'text', 'publish_date', 'url', 'privacy', 'user_id']
 KNOWLEDGE_DOMAINS_CSV_HEADERS = ['name']
@@ -53,7 +53,7 @@ with open('generator/ideas.csv', 'w') as ideas_csv:
     for i in range(NUM_IDEAS):
         ideas_writer.writerow(dict(
             name=fake.paragraph()[:25],
-            description=fake.paragraph()[:MAX_IDEA_LENGTH],
+            text=fake.paragraph()[:MAX_IDEA_LENGTH],
             publish_date=datetime.now(),
             url = fake.url(),
             privacy='private',

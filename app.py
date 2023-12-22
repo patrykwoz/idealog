@@ -8,6 +8,8 @@ from sqlalchemy import func
 from forms import UserAddForm, LoginForm, UserEditForm, IdeaAddForm, GroupAddForm, KnowledgeSourceAddForm, KnowledgeDomainAddForm, KnowledgeBaseAddForm
 from models import db, connect_db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
 
+from helpers.ml_functions import class_kb
+
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
@@ -291,7 +293,7 @@ def add_new_idea():
             idea = Idea(
                 name=form.name.data,
                 publish_date=form.publish_date.data,
-                description=form.description.data,
+                text=form.text.data,
                 url=form.url.data,
                 privacy=form.privacy.data,
                 groups=groups,
@@ -331,7 +333,7 @@ def edit_idea(idea_id):
             return render_template('ideas/new_idea.html', form=form)
 
         idea.name = form.name.data
-        idea.description = form.description.data
+        idea.text = form.text.data
         idea.publish_date = form.publish_date.data
         idea.url = form.url.data
         idea.groups = groups
@@ -588,6 +590,50 @@ def delete_knowledge_domain(knowledge_domain_id):
     flash("Successfully deleted your knowledge domain.", "success")
 
     return redirect('/knowledge-domains')
+
+##############################################################################
+# General KNOWLEDGE DOMAIN web routes (web pages).
+
+@app.route('/knowledge-bases', methods=["GET"])
+@requires_login
+def render_all_knowledge_bases():
+    knowledge_bases = KnowledgeBase.query.all()
+    return render_template('knowledge_bases/show_all_knowledge_bases.html', knowledge_bases=knowledge_bases)
+
+@app.route('/knowledge-bases/<int:knowledge_base_id>', methods=["GET"])
+@requires_login
+def detail_knowledge_base(knowledge_base_id):
+    knowledge_base = KnowledgeBase.query.get_or_404(knowledge_base_id)
+    return render_template('knowledge_bases/detail_knowledge_base.html', knowledge_base=knowledge_base)
+
+@app.route('/knowledge-bases/new', methods=["GET", "POST"])
+@requires_login
+@requires_admin
+def add_new_knowledge_base():
+    form = KnowledgeBaseAddForm()
+
+    form.ideas.choices = [(idea.id, idea.name) for idea in Idea.query.all()]
+    form.idea_groups.choices = [(group.id, group.name) for group in Group.query.all()]
+    form.knowledge_sources.choices = [(knowledge_source.id, knowledge_source.name) for knowledge_source in KnowledgeSource.query.all()]
+    form.knowledge_domains.choices = [(knowledge_domain.id, knowledge_domain.name) for knowledge_domain in KnowledgeDomain.query.all()]
+
+
+    if form.validate_on_submit():
+        try:
+            knowledge_base = KnowledgeBase(
+                name=form.name.data,
+                user_id = g.user.id
+            )
+            
+            db.session.add(knowledge_base)
+            db.session.commit()
+            flash("Successfully added a new knowledge_base.", "success")
+        except Exception as e:
+            flash(f"Something went wrong. Here's your error: {e}", "danger")
+        return redirect("/knowledge-bases")
+    return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+
+
 
 ##############################################################################
 # Homepage

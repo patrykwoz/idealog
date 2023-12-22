@@ -84,7 +84,7 @@ class Idea(db.Model):
 
     name = db.Column(db.Text, nullable=False)
     publish_date = db.Column(db.DateTime, nullable=False, default = datetime.utcnow())
-    description = db.Column(db.Text, nullable=False)
+    text = db.Column(db.Text, nullable=False)
     url = db.Column(db.Text, nullable=False)
 
     privacy = db.Column(db.Text, nullable=False, default="private")
@@ -186,6 +186,8 @@ class KnowledgeBase(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, nullable=False)
+    json_object = db.Column(db.JSON)
+    date_created = db.Column(db.DateTime, nullable=False, default = datetime.utcnow())
 
     privacy = db.Column(db.Text, nullable=False, default="private")
     status = db.Column(db.Text, nullable=False, default="pending")
