@@ -1,6 +1,6 @@
 email,username,image_url,password,user_type
-ashleybishop@example.com,danielshaw,https://randomuser.me/api/portraits/women/27.jpg,mypass,admin
-njackson@example.org,kimberly12,https://randomuser.me/api/portraits/women/37.jpg,mypass,admin
-njordan@example.org,john04,https://randomuser.me/api/portraits/men/38.jpg,mypass,admin
-mark41@example.net,qjimenez,https://randomuser.me/api/portraits/women/50.jpg,mypass,admin
-djohnson@example.org,joshuasparks,https://randomuser.me/api/portraits/men/31.jpg,mypass,admin
+noahhumphrey@example.com,freemandevin,https://randomuser.me/api/portraits/men/43.jpg,mypass,registered
+hendersonjeffrey@example.net,wsims,https://randomuser.me/api/portraits/women/32.jpg,mypass,registered
+halldaniel@example.com,kelly10,https://randomuser.me/api/portraits/men/95.jpg,mypass,registered
+tammyhall@example.org,donna72,https://randomuser.me/api/portraits/women/3.jpg,mypass,registered
+msanchez@example.org,martin48,https://randomuser.me/api/portraits/men/51.jpg,mypass,registered

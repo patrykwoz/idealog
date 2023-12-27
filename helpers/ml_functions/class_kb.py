@@ -5,6 +5,7 @@ import wikipedia
 from newspaper import Article, ArticleException
 from GoogleNews import GoogleNews
 from pyvis.network import Network
+import json
 
 tokenizer = AutoTokenizer.from_pretrained("Babelscape/rebel-large")
 model = AutoModelForSeq2SeqLM.from_pretrained("Babelscape/rebel-large")
@@ -155,6 +156,14 @@ class KB():
         print("Sources:")
         for s in self.sources.items():
             print(f"  {s}")
+    
+    def to_json(self):
+        kb_data = {
+            "entities": self.entities,
+            "relations": self.relations,
+            "sources": self.sources
+        }
+        return json.dumps(kb_data, indent=4)
 
 def from_small_text_to_kb(text, verbose=False):
     kb = KB()
@@ -295,7 +304,7 @@ def from_urls_to_kb(urls, verbose=False):
 def from_idea_to_kb(idea):
     config = {
         "article_title": idea.name,
-        "article_publish_date": idea.publish_date
+        "article_publish_date": idea.publish_date.isoformat()
     }
     kb = from_text_to_kb(idea.text, idea.url, **config)
     return kb
@@ -313,4 +322,4 @@ def from_ideas_to_kb(ideas, verbose=False):
         except ArticleException:
             if verbose:
                 print(f"Couldn't process the idea: {idea.name}")
-    return kb
+    return kb 

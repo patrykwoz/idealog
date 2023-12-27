@@ -11,7 +11,8 @@
 <div class="user-profile-content-container">
     <p>Name: {{ knowledge_base.name }}</p>
     <a href="/knowledge-bases/{{ knowledge_base.id }}/edit" class="btn btn-outline-secondary btn-sm">Edit</i></a>
-    <form action="/knowledge-bases/{{ knowledge_base.id }}/delete" method="post"><button class="btn btn-outline-secondary btn-sm">Delete</button></form>
+    <form action="/knowledge-bases/{{ knowledge_base.id }}/delete" method="post"><button
+            class="btn btn-outline-secondary btn-sm">Delete</button></form>
     <p>Date created: {{ knowledge_base.date_created }}</p>
 
     <h3>Ideas:</h3>
@@ -21,12 +22,33 @@
         {% endfor %}
     </ul>
 
+    <h3>Groups:</h3>
+    <ul>
+        {% for idea_group in knowledge_base.idea_groups %}
+        <li><a href="/idea-groups/{{ idea_group.id }}">{{ idea_group.name }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <h3>Knowledge Sources:</h3>
+    <ul>
+        {% for knowledge_source in knowledge_base.knowledge_sources %}
+        <li><a href="/knowledge-sources/{{ knowledge_source.id }}">{{ knowledge_source.name }}</a></li>
+        {% endfor %}
+    </ul>
+
     <h3>Knowledge Domains:</h3>
     <ul>
         {% for knowledge_domain in knowledge_base.knowledge_domains %}
         <li><a href="/knowledge-domains/{{ knowledge_domain.id }}">{{ knowledge_domain.name }}</a></li>
         {% endfor %}
     </ul>
+
+    <h3>Knowledge Graph:</h3>
+    <div class="div-graph-container">
+
+        <svg class="svg-graph-container"></svg>
+        <script src="{{ url_for('static', filename='js/displayGraph.js') }}"></script>
+    </div>
 
 </div>
 

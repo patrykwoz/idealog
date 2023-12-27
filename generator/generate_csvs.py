@@ -13,9 +13,9 @@ MAX_IDEA_LENGTH = 140
 
 USERS_CSV_HEADERS = ['email', 'username', 'image_url', 'password', 'user_type']
 IDEAS_CSV_HEADERS = ['name', 'text', 'publish_date', 'url', 'privacy', 'user_id']
-GROUPS_CSV_HEADERS = ['name']
+GROUPS_CSV_HEADERS = ['name', 'idea_id']
 KNOWLEDGE_SOURCES_CSV_HEADERS = ['name', 'text', 'publish_date', 'url', 'privacy', 'user_id']
-KNOWLEDGE_DOMAINS_CSV_HEADERS = ['name']
+KNOWLEDGE_DOMAINS_CSV_HEADERS = ['name', 'knowledge_source_id']
 
 NUM_USERS = 5
 NUM_IDEAS = 10
@@ -43,7 +43,7 @@ with open('generator/users.csv', 'w') as users_csv:
             username=fake.user_name(),
             image_url=choice(image_urls),
             password='mypass',
-            user_type='admin',
+            user_type='registered',
         ))
 
 with open('generator/ideas.csv', 'w') as ideas_csv:
@@ -54,7 +54,7 @@ with open('generator/ideas.csv', 'w') as ideas_csv:
         ideas_writer.writerow(dict(
             name=fake.paragraph()[:25],
             text=fake.paragraph()[:MAX_IDEA_LENGTH],
-            publish_date=datetime.now(),
+            publish_date=datetime.now().isoformat(),
             url = fake.url(),
             privacy='private',
             user_id=randint(1, NUM_USERS),
@@ -77,7 +77,7 @@ with open('generator/knowledge_sources.csv', 'w') as knowledge_sources_csv:
         knowledge_sources_writer.writerow(dict(
             name=fake.paragraph()[:25],
             text=fake.paragraph()[:MAX_IDEA_LENGTH],
-            publish_date=datetime.now(),
+            publish_date=datetime.now().isoformat(),
             url = fake.url(),
             privacy='private',
             user_id=randint(1, NUM_USERS),

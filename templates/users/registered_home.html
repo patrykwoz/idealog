@@ -12,8 +12,9 @@
     <a class="btn btn-outline-secondary btn-sm" href="/knowledge-bases/refresh">Refresh</a>
 </div>
 
-<div class="user-profile-content-container graph-container">
-    <p>Knowledge graph.</p>
+<div class="user-profile-content-container">
+    <svg class="svg-graph-container"></svg>
+    <script src="{{ url_for('static', filename='js/displayGraphWithZoom.js') }}"></script>
 </div>
 
 {% endblock %}

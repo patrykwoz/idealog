@@ -374,7 +374,6 @@ def detail_group(group_id):
 
 @app.route('/idea-groups/new', methods=["GET", "POST"])
 @requires_login
-@requires_admin
 def add_new_group():
     form = GroupAddForm()
 
@@ -401,7 +400,6 @@ def add_new_group():
 
 @app.route('/idea-groups/<int:group_id>/edit', methods=["GET", "POST"])
 @requires_login
-@requires_admin
 def edit_group(group_id):
     group = Group.query.get_or_404(group_id)
     form = GroupAddForm(obj=group)
@@ -498,7 +496,7 @@ def edit_knowledge_source(knowledge_source_id):
     if form.validate_on_submit():
         knowledge_domains_choices_ids = form.knowledge_domains.data
         if not isinstance(knowledge_domains_choices_ids, list):
-                knowledge_domains_choices_ids = [knowledge_domains_choices_ids]
+            knowledge_domains_choices_ids = [knowledge_domains_choices_ids]
 
         knowledge_domains = KnowledgeDomain.query.filter(KnowledgeDomain.id.in_(knowledge_domains_choices_ids)).all()
         if len(knowledge_domains) != len(knowledge_domains_choices_ids):
@@ -547,7 +545,6 @@ def detail_knowledge_domain(knowledge_domain_id):
 
 @app.route('/knowledge-domains/new', methods=["GET", "POST"])
 @requires_login
-@requires_admin
 def add_new_knowledge_domain():
     form = KnowledgeDomainAddForm()
     if form.validate_on_submit():
@@ -567,7 +564,6 @@ def add_new_knowledge_domain():
 
 @app.route('/knowledge-domains/<int:knowledge_domain_id>/edit', methods=["GET", "POST"])
 @requires_login
-@requires_admin
 def edit_knowledge_domain(knowledge_domain_id):
     knowledge_domain=KnowledgeDomain.query.get_or_404(knowledge_domain_id)
     form = KnowledgeDomainAddForm(obj=knowledge_domain)
@@ -592,7 +588,7 @@ def delete_knowledge_domain(knowledge_domain_id):
     return redirect('/knowledge-domains')
 
 ##############################################################################
-# General KNOWLEDGE DOMAIN web routes (web pages).
+# General KNOWLEDGE BASE web routes (web pages).
 
 @app.route('/knowledge-bases', methods=["GET"])
 @requires_login
@@ -622,8 +618,82 @@ def add_new_knowledge_base():
         try:
             knowledge_base = KnowledgeBase(
                 name=form.name.data,
-                user_id = g.user.id
+                user_id = g.user.id,
+                status = 'pending'
             )
+            
+            ideas_choices_ids = form.ideas.data
+            if not isinstance(ideas_choices_ids, list):
+                ideas_choices_ids = [ideas_choices_ids]
+
+            ideas = Idea.query.filter(Idea.id.in_(ideas_choices_ids)).all()
+            if len(ideas) != len(ideas_choices_ids):
+                flash("One or more selected ideas do not exist.", "danger")
+                return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+            
+            for idea in ideas:
+                knowledge_base.ideas.append(idea)
+            
+            knowledge_sources_choices_ids = form.knowledge_sources.data
+            if not isinstance(knowledge_sources_choices_ids, list):
+                knowledge_sources_choices_ids = [knowledge_sources_choices_ids]
+
+            knowledge_sources = KnowledgeSource.query.filter(KnowledgeSource.id.in_(knowledge_sources_choices_ids)).all()
+            if len(knowledge_sources) != len(knowledge_sources_choices_ids):
+                flash("One or more selected knowledgesources do not exist.", "danger")
+                return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+            
+            for knowledge_source in knowledge_sources:
+                knowledge_base.knowledge_sources.append(knowledge_source)
+            
+            #Ideas from groups
+            idea_groups_choices_ids = form.idea_groups.data
+            if not isinstance(idea_groups_choices_ids, list):
+                idea_groups_choices_ids = [idea_groups_choices_ids]
+            
+            idea_groups = Group.query.filter(Group.id.in_(idea_groups_choices_ids)).all()
+            if len(idea_groups) != len(idea_groups_choices_ids):
+                flash("One or more selected groups do not exist.", "danger")
+                return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+            
+            
+            ideas_from_groups=[]
+            for idea_group in idea_groups:
+                ideas_from_groups.extend(idea_group.ideas)
+            
+            for idea in ideas_from_groups:
+                knowledge_base.ideas.append(idea)
+
+            for idea_group in idea_groups:
+                knowledge_base.idea_groups.append(idea_group)
+            
+            #Knowledge Sources from Knowledge Domains
+            knowledge_domains_choices_ids = form.knowledge_domains.data
+            if not isinstance(knowledge_domains_choices_ids, list):
+                knowledge_domains_choices_ids = [knowledge_domains_choices_ids]
+            
+            knowledge_domains = KnowledgeDomain.query.filter(KnowledgeDomain.id.in_(knowledge_domains_choices_ids)).all()
+            if len(knowledge_domains) != len(knowledge_domains_choices_ids):
+                flash("One or more selected knowledge domains do not exist.", "danger")
+                return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+            
+            knowledge_sources_from_domains=[]
+            for knowledge_domain in knowledge_domains:
+                knowledge_sources_from_domains.extend(knowledge_domain.knowledge_sources)
+            
+            for knowledge_source in knowledge_sources_from_domains:
+                knowledge_base.knowledge_sources.append(knowledge_source)
+            
+            for knowledge_domain in knowledge_domains:
+                knowledge_base.knowledge_domains.append(knowledge_domain)
+
+
+            merged_ideas = ideas + knowledge_sources + ideas_from_groups + knowledge_sources_from_domains
+            knowledge_base_class_object = class_kb.from_ideas_to_kb(merged_ideas,verbose=False)
+            jsonified_knowledge_base_object = knowledge_base_class_object.to_json()
+
+            knowledge_base.json_object = jsonified_knowledge_base_object
+            knowledge_base.status = 'ready'
             
             db.session.add(knowledge_base)
             db.session.commit()
@@ -634,6 +704,10 @@ def add_new_knowledge_base():
     return render_template('knowledge_bases/new_knowledge_base.html', form=form)
 
 
+def aggregate_idea(objects):
+    for object in objects:
+        if not isinstance(object, list):
+                    ideas_choices_ids = [ideas_choices_ids]
 
 ##############################################################################
 # Homepage
@@ -710,7 +784,9 @@ def add_header(req):
     req.headers['Cache-Control'] = 'public, max-age=0'
     return req
 
-
+##############################################################################
+##############################################################################
+##############################################################################
 ##############################################################################
 # Restful API Routes
 # These routes return JSON Files
@@ -723,3 +799,27 @@ def return_all_users():
     """Return All users within a specified limite of users returned from db as a JSON object."""
     all_users = "Query all users from db and jsonify"
     return all_users
+
+##############################################################################
+# KNOWLEDGE BASES
+@app.route('/api/knowledge-bases/<int:knowledge_base_id>', methods=["GET"])
+def return_knowledge_base_json(knowledge_base_id):
+    """Return a Knowledge Base JSON object if processing of KB has been completed(status = 'ready')."""
+    knowledge_base = KnowledgeBase.query.get_or_404(knowledge_base_id)
+    knowledge_base_json=knowledge_base.json_object
+    return knowledge_base_json
+
+@app.route('/api/knowledge-bases', methods=["GET"])
+def return_latest_knowledge_base_json():
+    """Return a Knowledge Base JSON object if processing of KB has been completed(status = 'ready')."""
+    content = request.args.get('content')
+    
+    if content == 'latest':
+        knowledge_base = KnowledgeBase.query.order_by(KnowledgeBase.id.desc()).first()
+        if knowledge_base:
+            knowledge_base_json = knowledge_base.json_object
+            return knowledge_base_json
+        else:
+            return {"error": "No knowledge bases found"}, 404
+
+    return {"error": "Invalid content parameter"}, 400
