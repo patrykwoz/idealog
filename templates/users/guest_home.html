@@ -1,0 +1,19 @@
+{% extends 'users/guest_user_navbar.html' %}
+
+{% block guest_content %}
+
+<div class="heading-container">
+    <div class="heading-line-gradient-to-right"></div>
+    <h2 class="heading-text">Knowledge Graph Display</h2>
+    <div class="heading-line-gradient-to-left"></div>
+</div>
+
+<div class="user-profile-content-container">
+    <div class="container-message" id="select-kb-message"><p>Select a knowledge base to display</p><p><i class="fa-solid fa-arrow-up"></i></p></div>
+    <svg class="svg-graph-container" id="svg-graph-container"></svg>
+    <script src="{{ url_for('static', filename='js/displayGraphGuestHome.js') }}"></script>
+</div>
+
+<div class="footer"></div>
+
+{% endblock %}

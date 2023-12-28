@@ -43,14 +43,17 @@
         {% endfor %}
     </ul>
 
-    <h3>Knowledge Graph:</h3>
+</div>
+
+<h3>Knowledge Graph:</h3>
+<div class="user-profile-content-container">
     <div class="div-graph-container">
 
         <svg class="svg-graph-container"></svg>
-        <script src="{{ url_for('static', filename='js/displayGraph.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/displayGraphWithZoom.js') }}"></script>
     </div>
-
 </div>
 
+<div class="footer"></div>
 
 {% endblock %}

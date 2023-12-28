@@ -1,17 +1,17 @@
-{% extends 'users/registered_user_navbar.html' %}
+{% extends 'base.html' %}
 
-{% block registered_content %}
+{% block content %}
 
 <div class="heading-container">
     <div class="heading-line-gradient-to-right"></div>
-    <h2 class="heading-text">Your knowledge bases.</h2>
+    <h2 class="heading-text">Trending on <b>Idealog</b>.</h2>
     <div class="heading-line-gradient-to-left"></div>
 </div>
 
-<div class="user-profile-content-container graph-container">
+<div class="trending-list-container list-group container" id="guest-kb-list">
     {% for knowledge_base in knowledge_bases %}
-    <div class="card-contents">
-        <a href="/knowledge-bases/{{ knowledge_base.id }}" class="card-link">{{ knowledge_base.name }}</a>
+    <div class="list-group-item list-group-item-action kb-item" id="{{ knowledge_base.id }}">
+        {{ knowledge_base.name }}
         {% if knowledge_base.privacy == 'private' %}
         <i class="fa-solid fa-user"></i>
         {% elif knowledge_base.privacy == 'public' %}
@@ -22,14 +22,19 @@
         {% elif knowledge_base.creation_mode == 'manual'%}
         <i class="fa-solid fa-person"></i>
         {% endif %}
-        <a href="/knowledge-bases/{{ knowledge_base.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
-        <form action="/knowledge-bases/{{ knowledge_base.id }}/delete" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
     </div>
 
 
     {% endfor %}
-
 </div>
+
+
+
+<div class="container">
+    {% block guest_content %}
+    {% endblock %}
+</div>
+
 
 
 {% endblock %}

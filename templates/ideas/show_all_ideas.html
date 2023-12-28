@@ -12,6 +12,16 @@
     {% for idea in ideas %}
     <div class="card-contents">
         <a href="/ideas/{{ idea.id }}" class="card-link">{{ idea.name }}</a>
+        {% if idea.privacy == 'private' %}
+        <i class="fa-solid fa-user"></i>
+        {% elif idea.privacy == 'public' %}
+        <i class="fa-solid fa-users"></i>
+        {% endif %}
+        {% if idea.creation_mode == 'automated'%}
+        <i class="fa-solid fa-robot"></i>
+        {% elif idea.creation_mode == 'manual'%}
+        <i class="fa-solid fa-person"></i>
+        {% endif %}
         <a href="/ideas/{{ idea.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
         <form action="/ideas/{{ idea.id }}/delete" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
     </div>

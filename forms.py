@@ -15,6 +15,14 @@ class UserAddForm(FlaskForm):
     image_url = StringField('(Optional) Image URL')
     user_type = SelectField('User Type', choices=[('admin', 'Administrator'), ('registered', 'Registered')])
 
+class UserSignupForm(FlaskForm):
+    """Form for adding users."""
+
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[Length(min=6)])
+    image_url = StringField('(Optional) Image URL')
+
 
 class LoginForm(FlaskForm):
     """Login form."""
@@ -45,6 +53,8 @@ class IdeaAddForm(FlaskForm):
     text = TextAreaField('Idea Description', validators=[DataRequired(), Length(min=3)])
     url = StringField('(Optional) Idea URL')
     privacy = SelectField('Idea Privacy', choices=[('private', 'Private'), ('public', 'Public')])
+    creation_mode = SelectField('Creation Mode', choices=[('manual', 'Manual'), ('automated', 'Automated')])
+
     idea_groups = SelectMultipleField('Idea Groups', choices=[],  coerce=int)
 
 
@@ -71,6 +81,7 @@ class KnowledgeSourceAddForm(FlaskForm):
     url = StringField('(Optional) Knowledge Source URL')
 
     privacy = SelectField('Knowledge Source Privacy', choices=[('private', 'Private'), ('public', 'Public')])
+    creation_mode = SelectField('Creation Mode', choices=[('manual', 'Manual'), ('automated', 'Automated')])
 
     knowledge_domains = SelectMultipleField('Knowledge Domains', choices=[],  coerce=int)
 
@@ -96,3 +107,10 @@ class KnowledgeBaseAddForm(FlaskForm):
     idea_groups = SelectMultipleField('Idea Groups', choices=[],  coerce=int)
     knowledge_sources = SelectMultipleField('Knowledge Sources', choices=[],  coerce=int)
     knowledge_domains = SelectMultipleField('Knowledge Domains', choices=[],  coerce=int)
+
+class KnowledgeBaseEditForm(FlaskForm):
+    """Form for editting knowledge bases."""
+
+    name = StringField('Knowledge Base Name', validators=[DataRequired()])
+    privacy = SelectField('Knowledge Source Privacy', choices=[('private', 'Private'), ('public', 'Public')])
+    creation_mode = SelectField('Creation Mode', choices=[('manual', 'Manual'), ('automated', 'Automated')])

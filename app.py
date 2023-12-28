@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from sqlalchemy.exc import IntegrityError, PendingRollbackError
 from sqlalchemy import func
 
-from forms import UserAddForm, LoginForm, UserEditForm, IdeaAddForm, GroupAddForm, KnowledgeSourceAddForm, KnowledgeDomainAddForm, KnowledgeBaseAddForm
+from forms import UserAddForm, UserSignupForm, LoginForm, UserEditForm, IdeaAddForm, GroupAddForm, KnowledgeSourceAddForm, KnowledgeDomainAddForm, KnowledgeBaseAddForm, KnowledgeBaseEditForm
 from models import db, connect_db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
 
 from helpers.ml_functions import class_kb
@@ -72,7 +72,7 @@ def requires_admin(view_func):
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
     """Handle user signup. """
-    form = UserAddForm()
+    form = UserSignupForm()
 
     default_profile_img = 'images/default_profile_pic.jpg'
 
@@ -83,7 +83,7 @@ def signup():
                 password=form.password.data,
                 email=form.email.data,
                 image_url=form.image_url.data or default_profile_img,
-                user_type=form.user_type.data
+                user_type='registered'
             )
             db.session.commit()
 
@@ -128,16 +128,6 @@ def logout():
 ##############################################################################
 # General user web routes (pages):
 
-@app.route('/users/<int:user_id>')
-@requires_login
-def users_show(user_id):
-    """Show user profile."""
-
-    user = User.query.get_or_404(user_id)
-
-    return render_template('users/detail_user.html', user=user)
-
-
 @app.route('/users/profile', methods=["GET", "POST"])
 @requires_login
 def profile():
@@ -172,6 +162,16 @@ def list_users():
     users = User.query.all()
 
     return render_template('users/show_all_users.html', users=users)
+
+@app.route('/users/<int:user_id>')
+@requires_login
+@requires_admin
+def user_show(user_id):
+    """Show user profile."""
+
+    user = User.query.get_or_404(user_id)
+
+    return render_template('users/detail_user.html', user=user)
 
 @app.route('/users/new', methods=["GET","POST"])
 @requires_login
@@ -241,16 +241,32 @@ def delete_user(user_id):
 # General user search routes (pages)
 @app.route('/search', methods=["GET"])
 def search_results():
-
     query = request.args.get('home-query')
     query = f"%{query}%"
 
-
-    ideas = Idea.query.filter(Idea.name.ilike(f"%{query}%")).all()
-    groups = Group.query.filter(Group.name.ilike(f"%{query}%")).all()
-    knowledge_sources = KnowledgeSource.query.filter(KnowledgeSource.name.ilike(f"%{query}%")).all()
-    knowledge_domains = KnowledgeDomain.query.filter(KnowledgeDomain.name.ilike(f"%{query}%")).all()
-    knowledge_bases  = KnowledgeBase.query.filter(KnowledgeBase.name.ilike(f"%{query}%")).all()
+    # Check user status
+    if g.user:
+        if 'admin' in g.user.user_type:
+            # Admin: Show all entries
+            ideas = Idea.query.filter(Idea.name.ilike(query)).all()
+            groups = Group.query.filter(Group.name.ilike(query)).all()
+            knowledge_sources = KnowledgeSource.query.filter(KnowledgeSource.name.ilike(query)).all()
+            knowledge_domains = KnowledgeDomain.query.filter(KnowledgeDomain.name.ilike(query)).all()
+            knowledge_bases = KnowledgeBase.query.filter(KnowledgeBase.name.ilike(query)).all()
+        else:
+            # Registered user: Show own private entries and public entries
+            ideas = Idea.query.filter(Idea.name.ilike(query), (Idea.privacy == 'public') | (Idea.user_id == g.user.id)).all()
+            groups = Group.query.filter(Group.name.ilike(query), (Group.privacy == 'public') | (Group.user_id == g.user.id)).all()
+            knowledge_sources = KnowledgeSource.query.filter(KnowledgeSource.name.ilike(query), (KnowledgeSource.privacy == 'public') | (KnowledgeSource.user_id == g.user.id)).all()
+            knowledge_domains = KnowledgeDomain.query.filter(KnowledgeDomain.name.ilike(query), (KnowledgeDomain.privacy == 'public') | (KnowledgeDomain.user_id == g.user.id)).all()
+            knowledge_bases = KnowledgeBase.query.filter(KnowledgeBase.name.ilike(query), (KnowledgeBase.privacy == 'public') | (KnowledgeBase.user_id == g.user.id)).all()
+    else:
+        # Guest: Show only public entries
+        ideas = Idea.query.filter(Idea.name.ilike(query), Idea.privacy == 'public').all()
+        groups = Group.query.filter(Group.name.ilike(query), Group.privacy == 'public').all()
+        knowledge_sources = KnowledgeSource.query.filter(KnowledgeSource.name.ilike(query), KnowledgeSource.privacy == 'public').all()
+        knowledge_domains = KnowledgeDomain.query.filter(KnowledgeDomain.name.ilike(query), KnowledgeDomain.privacy == 'public').all()
+        knowledge_bases = KnowledgeBase.query.filter(KnowledgeBase.name.ilike(query), KnowledgeBase.privacy == 'public').all()
 
     return render_template('searches/home_search.html', ideas=ideas, groups=groups, knowledge_sources=knowledge_sources, knowledge_domains=knowledge_domains, knowledge_bases=knowledge_bases)
 
@@ -259,7 +275,11 @@ def search_results():
 @app.route('/ideas', methods=["GET"])
 @requires_login
 def render_all_ideas():
-    ideas = Idea.sorted_query()
+    if 'admin' in g.user.user_type:
+        ideas = Idea.sorted_query()
+    else:
+        ideas = Idea.query.filter((Idea.privacy == 'public') | (Idea.user_id == g.user.id)).all()
+
     return render_template('ideas/show_all_ideas.html', ideas=ideas, user=g.user)
 
 @app.route('/ideas/<int:idea_id>', methods=["GET"])
@@ -296,6 +316,7 @@ def add_new_idea():
                 text=form.text.data,
                 url=form.url.data,
                 privacy=form.privacy.data,
+                creation_mode=form.creation_mode.data,
                 groups=groups,
                 user_id=g.user.id
             )
@@ -338,6 +359,7 @@ def edit_idea(idea_id):
         idea.url = form.url.data
         idea.groups = groups
         idea.privacy = form.privacy.data
+        idea.creation_mode = form.creation_mode.data
 
         try:
             db.session.commit()
@@ -363,7 +385,11 @@ def delete_idea(idea_id):
 @app.route('/idea-groups', methods=["GET"])
 @requires_login
 def render_all_groups():
-    groups = Group.query.all()
+    if 'admin' in g.user.user_type:
+        groups = Group.query.all()
+    else:
+        groups = Group.query.filter((Group.user_id == g.user.id)).all()
+
     return render_template('groups/show_all_groups.html', groups=groups, user=g.user)
 
 @app.route('/idea-groups/<int:group_id>', methods=["GET"])
@@ -409,7 +435,7 @@ def edit_group(group_id):
             group.name=form.name.data
             
             db.session.commit()
-            flash("Successfully editted your group.", "success")
+            flash("Successfully edited your group.", "success")
         except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
 
@@ -434,7 +460,11 @@ def delete_group(group_id):
 @app.route('/knowledge-sources', methods=["GET"])
 @requires_login
 def render_all_knowledge_sources():
-    knowledge_sources = KnowledgeSource.query.all()
+    if 'admin' in g.user.user_type:
+        knowledge_sources = KnowledgeSource.query.all()
+    else:
+        knowledge_sources = KnowledgeSource.query.filter((KnowledgeSource.privacy == 'public') | (KnowledgeSource.user_id == g.user.id)).all()
+    
     return render_template('knowledge_sources/show_all_knowledge_sources.html', knowledge_sources=knowledge_sources)
 
 @app.route('/knowledge-sources/<int:knowledge_source_id>', methods=["GET"])
@@ -469,6 +499,7 @@ def add_new_knowledge_source():
                 text=form.text.data,
                 url=form.url.data,
                 privacy=form.privacy.data,
+                creation_mode = form.creation_mode.data,
                 knowledge_domains=knowledge_domains,
                 user_id=g.user.id
             )
@@ -482,6 +513,19 @@ def add_new_knowledge_source():
         return redirect("/knowledge-sources")
 
     return render_template('knowledge_sources/new_knowledge_source.html', form=form)
+
+@app.route('/knowledge-sources/new-from-internet', methods=["GET", "POST"])
+@requires_login
+@requires_admin
+def add_new_knowledge_source_internet():
+    return render_template('knowledge_sources/new_knowledge_source.html', form=form)
+
+@app.route('/knowledge-sources/new-from-files', methods=["GET", "POST"])
+@requires_login
+@requires_admin
+def add_new_knowledge_source_files():
+    return render_template('knowledge_sources/new_knowledge_source.html', form=form)
+
 
 @app.route('/knowledge-sources/<int:knowledge_source_id>/edit', methods=["GET", "POST"])
 @requires_login
@@ -509,9 +553,11 @@ def edit_knowledge_source(knowledge_source_id):
         knowledge_source.url = form.url.data
         knowledge_source.knowledge_domains = knowledge_domains
         knowledge_source.privacy = form.privacy.data
+        knowledge_source.creation_mode = form.creation_mode.data
 
         try:
             db.session.commit()
+            flash("Successfully edited your knowledge source.", "success")
         except(e):
             flash(f"Something went wrong. Here's your error: {e}", "danger")
         return redirect("/knowledge-sources")
@@ -534,7 +580,11 @@ def delete_knowledge_source(knowledge_source_id):
 @app.route('/knowledge-domains', methods=["GET"])
 @requires_login
 def render_all_knowledge_domains():
-    knowledge_domains = KnowledgeDomain.query.all()
+    if 'admin' in g.user.user_type:
+        knowledge_domains = KnowledgeDomain.query.all()
+    else:
+        knowledge_domains = KnowledgeDomain.query.filter((KnowledgeDomain.user_id == g.user.id)).all()
+    
     return render_template('knowledge_domains/show_all_knowledge_domains.html', knowledge_domains=knowledge_domains)
 
 @app.route('/knowledge-domains/<int:knowledge_domain_id>', methods=["GET"])
@@ -571,7 +621,7 @@ def edit_knowledge_domain(knowledge_domain_id):
         try:
             knowledge_domain.name=form.name.data            
             db.session.commit()
-            flash("Successfully editted your knowledge_domain.", "success")
+            flash("Successfully edited your knowledge_domain.", "success")
         except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
         return redirect("/knowledge-domains")
@@ -593,7 +643,11 @@ def delete_knowledge_domain(knowledge_domain_id):
 @app.route('/knowledge-bases', methods=["GET"])
 @requires_login
 def render_all_knowledge_bases():
-    knowledge_bases = KnowledgeBase.query.all()
+    if 'admin' in g.user.user_type:
+        knowledge_bases = KnowledgeBase.query.all()
+    else:
+        knowledge_bases = KnowledgeBase.query.filter((KnowledgeBase.privacy == 'public') | (KnowledgeBase.user_id == g.user.id)).all()
+
     return render_template('knowledge_bases/show_all_knowledge_bases.html', knowledge_bases=knowledge_bases)
 
 @app.route('/knowledge-bases/<int:knowledge_base_id>', methods=["GET"])
@@ -703,8 +757,39 @@ def add_new_knowledge_base():
         return redirect("/knowledge-bases")
     return render_template('knowledge_bases/new_knowledge_base.html', form=form)
 
+@app.route('/knowledge-bases/<int:knowledge_base_id>/edit', methods=["GET", "POST"])
+@requires_login
+@requires_admin
+def edit_knowledge_base(knowledge_base_id):
+    knowledge_base  = KnowledgeBase.query.get_or_404(knowledge_base_id)
+    form = KnowledgeBaseEditForm(obj=knowledge_base)
 
-def aggregate_idea(objects):
+    if form.validate_on_submit():
+        knowledge_base.name = form.name.data
+        knowledge_base.privacy = form.privacy.data
+        knowledge_base.creation_mode = form.creation_mode.data
+
+        try:
+            db.session.commit()
+            flash("Successfully edited your knowledge base.", "success")
+        except(e):
+            flash(f"Something went wrong. Here's your error: {e}", "danger")
+        return redirect("/knowledge-bases")
+    return render_template('knowledge_bases/edit_knowledge_base.html', form=form)
+
+
+@app.route('/knowledge-bases/<int:knowledge_base_id>/delete', methods=["GET", "POST"])
+@requires_login
+@requires_admin
+def delete_knowledge_base(knowledge_base_id):
+    knowledge_base = KnowledgeBase.query.get_or_404(knowledge_base_id)
+    db.session.delete(knowledge_base)
+    db.session.commit()
+    flash("Successfully deleted your knowledge base.", "success")
+
+    return redirect("/knowledge-bases")
+
+def aggregate_ideas(objects):
     for object in objects:
         if not isinstance(object, list):
                     ideas_choices_ids = [ideas_choices_ids]
@@ -720,7 +805,9 @@ def homepage():
         return render_template('users/registered_home.html', user=user)
 
     else:
-        return render_template('home_guest.html')
+        knowledge_bases = KnowledgeBase.query.filter((KnowledgeBase.privacy == 'public')).all()
+
+        return render_template('users/guest_home.html', knowledge_bases=knowledge_bases)
 
 ##############################################################################
 # Docs page
@@ -806,6 +893,8 @@ def return_all_users():
 def return_knowledge_base_json(knowledge_base_id):
     """Return a Knowledge Base JSON object if processing of KB has been completed(status = 'ready')."""
     knowledge_base = KnowledgeBase.query.get_or_404(knowledge_base_id)
+    if knowledge_base.privacy == "private":
+        return {"error": "No knowledge bases found"}, 404
     knowledge_base_json=knowledge_base.json_object
     return knowledge_base_json
 

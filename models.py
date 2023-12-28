@@ -82,6 +82,7 @@ class Idea(db.Model):
     url = db.Column(db.Text, nullable=False)
 
     privacy = db.Column(db.Text, nullable=False, default="private")
+    creation_mode = db.Column(db.Text, nullable=False, default="automated")
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     
@@ -103,6 +104,7 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, nullable=False, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
+    privacy = db.Column(db.Text, nullable=False, default="private")
 
     user = db.relationship('User', backref='groups')
     
@@ -122,6 +124,9 @@ class Artifact(db.Model):
     url = db.Column(db.Text, nullable=False)
     file_url = db.Column(db.Text, nullable=False)
     idea_id = db.Column(db.Integer, db.ForeignKey('ideas.id', ondelete="CASCADE"))
+
+    privacy = db.Column(db.Text, nullable=False, default="private")
+    creation_mode = db.Column(db.Text, nullable=False, default="automated")
 
     idea = db.relationship('Idea', backref='artifacts')
 
@@ -148,6 +153,7 @@ class KnowledgeSource(db.Model):
     url = db.Column(db.Text, nullable=False)
 
     privacy = db.Column(db.Text, nullable=False, default="private")
+    creation_mode = db.Column(db.Text, nullable=False, default="automated")
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     
@@ -169,8 +175,8 @@ class KnowledgeDomain(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, nullable=False)
-
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
+    privacy = db.Column(db.Text, nullable=False, default="private")
 
     user = db.relationship('User', backref='knowledge_domains')
     
@@ -189,6 +195,7 @@ class KnowledgeBase(db.Model):
 
     privacy = db.Column(db.Text, nullable=False, default="private")
     status = db.Column(db.Text, nullable=False, default="pending")
+    creation_mode = db.Column(db.Text, nullable=False, default="automated")
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
 
