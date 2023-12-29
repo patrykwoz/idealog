@@ -656,6 +656,14 @@ def detail_knowledge_base(knowledge_base_id):
     knowledge_base = KnowledgeBase.query.get_or_404(knowledge_base_id)
     return render_template('knowledge_bases/detail_knowledge_base.html', knowledge_base=knowledge_base)
 
+@app.route('/knowledge-bases/refresh', methods=["GET", "POST"])
+@requires_login
+@requires_admin
+def refresh_knowledge_base():
+    """Check whether all existing ideas and knowledge sources are included in the auto generated knowledge base of all ideas and kss
+    and if there isn't one that has all ideas and kss - create a new one and display when ready """
+    return redirect('/')
+
 @app.route('/knowledge-bases/new', methods=["GET", "POST"])
 @requires_login
 @requires_admin
@@ -777,6 +785,12 @@ def edit_knowledge_base(knowledge_base_id):
         return redirect("/knowledge-bases")
     return render_template('knowledge_bases/edit_knowledge_base.html', form=form)
 
+@app.route('/knowledge-bases/merge', methods=["GET", "POST"])
+@requires_login
+@requires_admin
+def merge_knowledge_bases():
+    """Select knowledge bases and merge them"""
+    return redirect('/')
 
 @app.route('/knowledge-bases/<int:knowledge_base_id>/delete', methods=["GET", "POST"])
 @requires_login
@@ -788,11 +802,6 @@ def delete_knowledge_base(knowledge_base_id):
     flash("Successfully deleted your knowledge base.", "success")
 
     return redirect("/knowledge-bases")
-
-def aggregate_ideas(objects):
-    for object in objects:
-        if not isinstance(object, list):
-                    ideas_choices_ids = [ideas_choices_ids]
 
 ##############################################################################
 # Homepage
@@ -892,8 +901,9 @@ def return_all_users():
 @app.route('/api/knowledge-bases/<int:knowledge_base_id>', methods=["GET"])
 def return_knowledge_base_json(knowledge_base_id):
     """Return a Knowledge Base JSON object if processing of KB has been completed(status = 'ready')."""
+    authorized = request.args.get('authorized')
     knowledge_base = KnowledgeBase.query.get_or_404(knowledge_base_id)
-    if knowledge_base.privacy == "private":
+    if (knowledge_base.privacy == "private") and (authorized != 'authorized'):
         return {"error": "No knowledge bases found"}, 404
     knowledge_base_json=knowledge_base.json_object
     return knowledge_base_json

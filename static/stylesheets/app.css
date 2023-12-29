@@ -296,7 +296,7 @@ button.idealog-btn{
 
 .user-profile-content-container{
     width: 1200px;
-    min-height: 50vh;
+    height: 800px;
 
     padding: 5px;
 
@@ -362,6 +362,7 @@ button.idealog-btn{
 
 .container-message{
     position: absolute;
+    top: 0;
     width: 100%;
     height: 100%;
     background-color: transparent;
@@ -378,5 +379,4 @@ button.idealog-btn{
 
 .footer{
     height: 150px;
-    min-height: 50px;
 }
