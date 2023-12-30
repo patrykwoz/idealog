@@ -29,7 +29,6 @@ connect_db(app)
 
 
 
-
 ##############################################################################
 # User signup/login/logout
 
@@ -805,7 +804,6 @@ def delete_knowledge_base(knowledge_base_id):
 
 ##############################################################################
 # Homepage
-
 @app.route('/')
 def homepage():
     """Show homepage.  """
