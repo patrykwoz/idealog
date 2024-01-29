@@ -1,4 +1,6 @@
-from flask import Flask, render_template, redirect, request, flash, session, g, jsonify
+from flask import (Flask, render_template, redirect, request, flash, session, g, jsonify, Blueprint)
+
+from .helpers import requires_login, requires_admin
 
 bp = Blueprint('views', __name__)
 
@@ -24,13 +26,3 @@ def documentation_page():
     """Show docs page."""
 
     return render_template('docs/index.html')
-
-##############################################################################
-# Admin Pages
-
-@bp.route('/admin')
-@requires_login
-@requires_admin
-def render_admin_index():
-
-    return redirect('/users')

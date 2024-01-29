@@ -10,17 +10,6 @@
 
 
 
-    <!-- NETWORK -->
-    <!-- <script src="{{ url_for('serve_bindings_js', filename='utils.js') }}"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css"
-        integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"
-        integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-
-
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,100;0,9..40,200;0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet">
@@ -63,27 +52,27 @@
                 <button hidden class="idealog-btn" type="submit">Search</button>
             </form>
 
-            <a href="/docs" class="idealog-btn">Docs</a>
+            <a href="{{ url_for('views.documentation_page') }}" class="idealog-btn">Docs</a>
 
             <div class="user-navigation">
 
                 {% if not g.user %}
-                <a href="/signup" class="idealog-btn">Signup</a>
-                <a href="/login" class="idealog-btn">Login</a>
+                <a href="{{ url_for('auth.signup') }}" class="idealog-btn">Signup</a>
+                <a href="{{ url_for('auth.login') }}" class="idealog-btn">Login</a>
                 {% else %}
                 {% if g.user.user_type=='admin' %}
-                <a href="/admin" class="idealog-btn admin-btn">Admin</a>
+                <a href="{{ url_for('users.render_admin_index') }}" class="idealog-btn admin-btn">Admin</a>
 
                 {% endif %}
 
-                <a href="/users/profile">
+                <a href="{{ url_for('users.profile') }}">
                     <div class="navbar-user-avatar">
                         <img src="{% if g.user.image_url.startswith('images') %}{{ url_for('static', filename=g.user.image_url) }}{% else %}{{ g.user.image_url }}{% endif %}"
                             alt="User profile image.">
                     </div>
                 </a>
 
-                <a href="/logout" class="idealog-btn">Logout</a>
+                <a href="{{ url_for('auth.logout') }}" class="idealog-btn">Logout</a>
                 {% endif %}
             </div>
         </div>

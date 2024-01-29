@@ -7,6 +7,8 @@ from flask import (
     session,
     g,
     jsonify,
+    Blueprint,
+    
 )
 
 from .models import (
@@ -29,7 +31,8 @@ from .forms import (
     KnowledgeBaseEditForm,
 )
 
-from ml_functions import class_kb
+from .ml_functions import class_kb
+from .helpers import requires_login, requires_admin
 
 bp = Blueprint('idealog', __name__)
 

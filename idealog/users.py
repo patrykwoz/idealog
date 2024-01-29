@@ -1,4 +1,6 @@
-from flask import Flask, render_template, redirect, flash, session, g, request, jsonify
+from flask import (Flask, render_template, redirect, flash, session, g, request, jsonify, Blueprint)
+
+from .helpers import requires_login, requires_admin
 
 bp = Blueprint('users', __name__)
 
@@ -146,3 +148,10 @@ def search_results():
         knowledge_bases = KnowledgeBase.query.filter(KnowledgeBase.name.ilike(query), KnowledgeBase.privacy == 'public').all()
 
     return render_template('searches/home_search.html', ideas=ideas, groups=groups, knowledge_sources=knowledge_sources, knowledge_domains=knowledge_domains, knowledge_bases=knowledge_bases)
+
+@bp.route('/admin')
+@requires_login
+@requires_admin
+def render_admin_index():
+
+    return redirect('/users')

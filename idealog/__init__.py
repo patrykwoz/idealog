@@ -15,6 +15,9 @@ from celery.result import AsyncResult
 from sqlalchemy.exc import IntegrityError, PendingRollbackError
 from sqlalchemy import func
 
+from urllib.parse import urlparse
+import redis
+
 from .celery_app import celery_init_app
 
 from .forms import (
@@ -41,23 +44,23 @@ from .models import (
     KnowledgeBase,
 )
 
-from . import users, views, auth, error_handlers, file_handlers, idealog, api
+from . import users, views, auth, idealog, api
+
+from .error_handler import register_error_handlers
+
+CURR_USER_KEY = "curr_user"
 
 def create_app(test_config=None) -> Flask:
-    # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    # Fetch the DATABASE_URL from the environment variable
     DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql:///idealog')
 
-    # Check if the URL needs to be modified for SQLAlchemy compatibility
     if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
     url = urlparse(os.environ.get('REDISCLOUD_URL', 'redis://localhost'))
     r = redis.Redis(host=url.hostname, port=url.port, password=url.password)
 
-    # Set SECRET_KEY and DATABASE URL from environment variables with fallback values
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'devnotcompletelyrandomsecretkey'),
         SQLALCHEMY_DATABASE_URI=DATABASE_URL,
@@ -77,10 +80,28 @@ def create_app(test_config=None) -> Flask:
 
     db.init_app(app)
 
+    #if i wannt to keep app.before_request in a separate file and register it here - how to do it?
+    @app.before_request
+    def add_user_to_g():
+        """If we're logged in, add curr user to Flask global."""
+        if CURR_USER_KEY in session:
+            g.user = User.query.get(session[CURR_USER_KEY])
+        else:
+            g.user = None
+
+    @app.after_request
+    def add_header(req):
+        """Add non-caching headers on every request."""
+        req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        req.headers["Pragma"] = "no-cache"
+        req.headers["Expires"] = "0"
+        req.headers['Cache-Control'] = 'public, max-age=0'
+        return req
+
+    register_error_handlers(app)
+
     app.register_blueprint(auth.bp)
     app.register_blueprint(users.bp)
-    app.register_blueprint(error_handlers.bp)
-    app.register_blueprint(file_handlers.bp)
     app.register_blueprint(views.bp)
     app.register_blueprint(idealog.bp)
     app.register_blueprint(api.bp)

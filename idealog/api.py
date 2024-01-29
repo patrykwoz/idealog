@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from idealog.models import KnowledgeBase
+from .helpers import requires_login, requires_admin
 
 bp = Blueprint('api', __name__)
 

@@ -1,3 +1,3 @@
-from flaskr import create_app
+from idealog import create_app
 
 app = create_app()
