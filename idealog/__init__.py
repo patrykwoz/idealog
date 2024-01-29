@@ -44,11 +44,12 @@ from .models import (
     KnowledgeBase,
 )
 
-from . import users, views, auth, idealog, api
+from . import users_bp, views, auth, idealog, api
 
 from .error_handler import register_error_handlers
 
-CURR_USER_KEY = "curr_user"
+from .helpers import requires_login, requires_admin, do_login, do_logout, CURR_USER_KEY
+
 
 def create_app(test_config=None) -> Flask:
     app = Flask(__name__, instance_relative_config=True)
@@ -70,10 +71,12 @@ def create_app(test_config=None) -> Flask:
             task_ignore_result=True,
         ),
     )
-
+    
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ECHO'] = False
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
+    app.config['FLASK_ENV'] = os.environ.get('FLASK_ENV', 'development')
+    app.config['FLASK_DEBUG'] = os.environ.get('FLASK_DEBUG', True)
 
     app.config.from_prefixed_env()
     celery_app = celery_init_app(app)
@@ -101,7 +104,7 @@ def create_app(test_config=None) -> Flask:
     register_error_handlers(app)
 
     app.register_blueprint(auth.bp)
-    app.register_blueprint(users.bp)
+    app.register_blueprint(users_bp.bp, url_prefix='/users_bp')
     app.register_blueprint(views.bp)
     app.register_blueprint(idealog.bp)
     app.register_blueprint(api.bp)

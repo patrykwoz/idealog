@@ -8,7 +8,7 @@ from flask import (
     g,
     jsonify,
     Blueprint,
-    
+    url_for, 
 )
 
 from .models import (
@@ -90,7 +90,7 @@ def add_new_idea():
         except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
 
-        return redirect("/ideas")
+        return redirect(url_for('idealog.render_all_ideas'))
 
     return render_template('ideas/new_idea.html', form=form)
 
@@ -127,7 +127,7 @@ def edit_idea(idea_id):
             db.session.commit()
         except(e):
             flash(f"Something went wrong. Here's your error: {e}", "danger")
-        return redirect("/ideas")
+        return redirect(url_for('idealog.render_all_ideas'))
 
     return render_template('ideas/edit_idea.html', form=form)
 
@@ -139,7 +139,7 @@ def delete_idea(idea_id):
     db.session.delete(idea)
     db.session.commit()
 
-    return redirect('/ideas')
+    return redirect(url_for('idealog.render_all_ideas'))
 
 
 ##############################################################################
@@ -181,7 +181,7 @@ def add_new_group():
         except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
 
-        return redirect("/idea-groups")
+        return redirect(url_for('idealog.render_all_groups'))
 
     return render_template('groups/new_group.html', form=form)
 
@@ -201,7 +201,7 @@ def edit_group(group_id):
         except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
 
-        return redirect("/idea-groups")
+        return redirect(url_for('idealog.render_all_groups'))
 
     return render_template('groups/edit_group.html', form=form)
 
@@ -213,7 +213,7 @@ def delete_group(group_id):
     db.session.commit()
     flash("Successfully deleted your group.", "success")
 
-    return redirect('/idea-groups')
+    return redirect(url_for('idealog.render_all_groups'))
 
 
 
@@ -272,7 +272,7 @@ def add_new_knowledge_source():
         except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
 
-        return redirect("/knowledge-sources")
+        return redirect(url_for('idealog.render_all_knowledge_sources'))
 
     return render_template('knowledge_sources/new_knowledge_source.html', form=form)
 
@@ -322,7 +322,7 @@ def edit_knowledge_source(knowledge_source_id):
             flash("Successfully edited your knowledge source.", "success")
         except(e):
             flash(f"Something went wrong. Here's your error: {e}", "danger")
-        return redirect("/knowledge-sources")
+        return redirect(url_for('idealog.render_all_knowledge_sources'))
 
     return render_template('knowledge_sources/edit_knowledge_source.html', form=form)
 
@@ -334,7 +334,7 @@ def delete_knowledge_source(knowledge_source_id):
     db.session.commit()
     flash("Successfully deleted your knowledge_source.", "success")
 
-    return redirect('/knowledge-sources')
+    return redirect(url_for('idealog.render_all_knowledge_sources'))
 
 ##############################################################################
 # General KNOWLEDGE DOMAIN web routes (web pages).
@@ -371,7 +371,7 @@ def add_new_knowledge_domain():
             flash("Successfully added a new knowledge_domain.", "success")
         except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
-        return redirect("/knowledge-domains")
+        return redirect(url_for('idealog.render_all_knowledge_domains'))
     return render_template('knowledge_domains/new_knowledge_domain.html', form=form)
 
 @bp.route('/knowledge-domains/<int:knowledge_domain_id>/edit', methods=["GET", "POST"])
@@ -386,7 +386,7 @@ def edit_knowledge_domain(knowledge_domain_id):
             flash("Successfully edited your knowledge_domain.", "success")
         except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
-        return redirect("/knowledge-domains")
+        return redirect(url_for('idealog.render_all_knowledge_domains'))
     return render_template('knowledge_domains/edit_knowledge_domain.html', form=form)
 
 @bp.route('/knowledge-domains/<int:knowledge_domain_id>/delete', methods=["POST"])
@@ -397,7 +397,7 @@ def delete_knowledge_domain(knowledge_domain_id):
     db.session.commit()
     flash("Successfully deleted your knowledge domain.", "success")
 
-    return redirect('/knowledge-domains')
+    return redirect(url_for('idealog.render_all_knowledge_domains'))
 
 ##############################################################################
 # General KNOWLEDGE BASE web routes (web pages).
@@ -424,7 +424,7 @@ def detail_knowledge_base(knowledge_base_id):
 def refresh_knowledge_base():
     """Check whether all existing ideas and knowledge sources are included in the auto generated knowledge base of all ideas and kss
     and if there isn't one that has all ideas and kss - create a new one and display when ready """
-    return redirect('/')
+    return redirect(url_for('views.homepage'))
 
 @bp.route('/knowledge-bases/new', methods=["GET", "POST"])
 @requires_login
@@ -524,7 +524,7 @@ def add_new_knowledge_base():
             flash("Successfully added a new knowledge_base.", "success")
         except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
-        return redirect("/knowledge-bases")
+        return redirect(url_for('idealog.render_all_knowledge_bases'))
     return render_template('knowledge_bases/new_knowledge_base.html', form=form)
 
 @bp.route('/knowledge-bases/<int:knowledge_base_id>/edit', methods=["GET", "POST"])
@@ -544,7 +544,7 @@ def edit_knowledge_base(knowledge_base_id):
             flash("Successfully edited your knowledge base.", "success")
         except(e):
             flash(f"Something went wrong. Here's your error: {e}", "danger")
-        return redirect("/knowledge-bases")
+        return redirect(url_for('idealog.render_all_knowledge_bases'))
     return render_template('knowledge_bases/edit_knowledge_base.html', form=form)
 
 @bp.route('/knowledge-bases/merge', methods=["GET", "POST"])
@@ -552,7 +552,7 @@ def edit_knowledge_base(knowledge_base_id):
 @requires_admin
 def merge_knowledge_bases():
     """Select knowledge bases and merge them"""
-    return redirect('/')
+    return redirect(url_for('views.homepage'))
 
 @bp.route('/knowledge-bases/<int:knowledge_base_id>/delete', methods=["GET", "POST"])
 @requires_login
@@ -563,4 +563,4 @@ def delete_knowledge_base(knowledge_base_id):
     db.session.commit()
     flash("Successfully deleted your knowledge base.", "success")
 
-    return redirect("/knowledge-bases")
+    return redirect(url_for('idealog.render_all_knowledge_bases'))

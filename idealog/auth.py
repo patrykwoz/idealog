@@ -2,20 +2,19 @@ from flask import (
     Flask,
     render_template,
     request, flash, redirect, session, g,
-    Blueprint
+    Blueprint,
+    url_for
 )
 
-from .helpers import requires_login, requires_admin
+from .helpers import requires_login, requires_admin, do_login, do_logout
+from sqlalchemy.exc import IntegrityError, PendingRollbackError
+from .models import db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
+from .forms import UserSignupForm, LoginForm
 
 bp = Blueprint('auth', __name__)
 
-
-
 ##############################################################################
 # User signup/login/logout
-
-
-
 
 @bp.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -31,7 +30,7 @@ def signup():
                 password=form.password.data,
                 email=form.email.data,
                 image_url=form.image_url.data or default_profile_img,
-                user_type='registered'
+                user_type='admin'
             )
             db.session.commit()
 
@@ -42,7 +41,7 @@ def signup():
         do_login(user)
         flash("Username successfully created.", 'success')
 
-        return redirect("/")
+        return redirect(url_for('views.homepage'))
 
     else:
         return render_template('users/signup.html', form=form)
@@ -59,7 +58,7 @@ def login():
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
-            return redirect("/")
+            return redirect(url_for('views.homepage'))
 
         flash("Invalid credentials.", 'danger')
 
@@ -70,5 +69,5 @@ def logout():
     """Handle logout of user."""
 
     do_logout()
-    return redirect("/")
+    return redirect(url_for('views.homepage'))
 

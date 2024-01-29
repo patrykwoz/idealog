@@ -1,8 +1,13 @@
-from flask import (Flask, render_template, redirect, flash, session, g, request, jsonify, Blueprint)
+from flask import (Flask,
+render_template, redirect, flash, session, g, request, jsonify, Blueprint,
+url_for)
 
 from .helpers import requires_login, requires_admin
 
-bp = Blueprint('users', __name__)
+from idealog.models import db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
+from idealog.forms import UserEditForm, UserAddForm
+
+bp = Blueprint('users_bp', __name__)
 
 ##############################################################################
 # General user web routes (pages):
@@ -23,9 +28,9 @@ def profile():
             flash("Succesffully saved changes.", "success")
         else:
             flash("Access unauthorized.", "danger")
-            return redirect("/")
+            return redirect(url_for('views.homepage'))
         
-        return redirect(f"/")
+        return redirect(url_for('views.homepage'))
 
     return render_template("users/profile.html", form=form)
 
@@ -82,7 +87,7 @@ def new_user():
         
         flash("Username successfully created.", 'success')
 
-        return redirect("/users")
+        return redirect(url_for('users_bp.list_users'))
     else:
         return render_template('users/new_user.html', form=form)
 
@@ -102,7 +107,7 @@ def edit_user(user_id):
         db.session.commit()
         flash("Succesffully saved changes.", "success")
 
-        return redirect(f"/users/{user_id}")
+        return redirect(url_for('users_bp.user_show', user_id=user_id))
 
     return render_template("users/edit_user.html", form=form, user=user)
 
@@ -115,7 +120,7 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
 
-    return redirect("/users")
+    return redirect(url_for('users_bp.list_users'))
 ##############################################################################
 # General user search routes (pages)
 @bp.route('/search', methods=["GET"])
@@ -154,4 +159,4 @@ def search_results():
 @requires_admin
 def render_admin_index():
 
-    return redirect('/users')
+    return redirect(url_for('users_bp.list_users'))

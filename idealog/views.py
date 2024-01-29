@@ -2,6 +2,8 @@ from flask import (Flask, render_template, redirect, request, flash, session, g,
 
 from .helpers import requires_login, requires_admin
 
+from idealog.models import db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
+
 bp = Blueprint('views', __name__)
 
 ##############################################################################
