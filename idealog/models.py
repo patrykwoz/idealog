@@ -1,5 +1,4 @@
 """SQLAlchemy models for Idealog."""
-
 from datetime import datetime
 
 from flask_bcrypt import Bcrypt
