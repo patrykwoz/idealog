@@ -10,20 +10,20 @@
 
 <div class="user-profile-content-container">
     <p>Name: {{ idea.name }}</p>
-    <a href="/ideas/{{ idea.id }}/edit" class="btn btn-outline-secondary btn-sm">Edit</i></a>
-    <form action="/ideas/{{ idea.id }}/delete" method="post"><button class="btn btn-outline-secondary btn-sm">Delete</button></form>
+    <a href="{{ url_for('idealog.edit_idea', idea_id=idea.id) }}" class="btn btn-outline-secondary btn-sm">Edit</i></a>
+    <form action="{{ url_for('idealog.delete_idea', idea_id=idea.id) }}" method="post"><button class="btn btn-outline-secondary btn-sm">Delete</button></form>
     <p>Description: {{ idea.description }}</p>
     <p>Published date: {{ idea.published_date }}</p>
     <h3>Idea Groups:</h3>
     <ul>
         {% for group in idea.groups %}
-        <li><a href="/groups/{{ group.id }}">{{ group.name }}</a></li>
+        <li><a href="{{ url_for('idealog.detail_group', group_id=group.id) }}">{{ group.name }}</a></li>
         {% endfor %}
     </ul>
     <h3>Idea Artifacts:</h3>
     <ul>
         {% for artifact in idea.artifacts %}
-        <li><a href="/artifacts/{{ artifact.id }}">{{ artifact.name }}</a></li>
+        <li><a href="{{ url_for('idealog.detail_artifact', artifact_id=artifact.id) }}">{{ artifact.name }}</a></li>
 
         {% endfor%}
 

@@ -11,7 +11,7 @@
 <div class="user-profile-content-container graph-container">
     {% for knowledge_base in knowledge_bases %}
     <div class="card-contents">
-        <a href="/knowledge-bases/{{ knowledge_base.id }}" class="card-link">{{ knowledge_base.name }}</a>
+        <a href="{{ url_for('idealog.detail_knowledge_base', knowledge_base_id=knowledge_base.id) }}" class="card-link">{{ knowledge_base.name }}</a>
         {% if knowledge_base.privacy == 'private' %}
         <i class="fa-solid fa-user"></i>
         {% elif knowledge_base.privacy == 'public' %}
@@ -22,8 +22,8 @@
         {% elif knowledge_base.creation_mode == 'manual'%}
         <i class="fa-solid fa-person"></i>
         {% endif %}
-        <a href="/knowledge-bases/{{ knowledge_base.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
-        <form action="/knowledge-bases/{{ knowledge_base.id }}/delete" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+        <a href="{{ url_for('idealog.edit_knowledge_base', knowledge_base_id=knowledge_base.id) }}"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="{{ url_for('idealog.delete_knowledge_base', knowledge_base_id=knowledge_base.id) }}" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
     </div>
 
 

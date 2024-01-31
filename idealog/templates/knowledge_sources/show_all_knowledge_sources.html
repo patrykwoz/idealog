@@ -11,7 +11,7 @@
 <div class="user-profile-content-container graph-container">
     {% for knowledge_source in knowledge_sources %}
     <div class="card-contents">
-        <a href="/knowledge-sources/{{ knowledge_source.id }}" class="card-link">{{ knowledge_source.name }}</a>
+        <a href="{{ url_for('idealog.detail_knowledge_source', knowledge_source_id=knowledge_source.id) }}" class="card-link">{{ knowledge_source.name }}</a>
         {% if knowledge_source.privacy == 'private' %}
         <i class="fa-solid fa-user"></i>
         {% elif knowledge_source.privacy == 'public' %}
@@ -22,8 +22,8 @@
         {% elif knowledge_source.creation_mode == 'manual'%}
         <i class="fa-solid fa-person"></i>
         {% endif %}
-        <a href="/knowledge-sources/{{ knowledge_source.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
-        <form action="/knowledge-sources/{{ knowledge_source.id }}/delete" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+        <a href="{{ url_for('idealog.edit_knowledge_source', knowledge_source_id=knowledge_source.id) }}"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="{{ url_for('idealog.delete_knowledge_source', knowledge_source_id=knowledge_source.id) }}" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
     </div>
 
 

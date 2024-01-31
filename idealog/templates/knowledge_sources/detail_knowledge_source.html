@@ -12,9 +12,9 @@
     <h3>Name:</h3>
     {{ knowledge_source.name }}
     <div>
-        <a href="/knowledge-sources/{{ knowledge_source.id }}/edit"
+        <a href="{{ url_for('idealog.edit_knowledge_source', knowledge_source_id=knowledge_source.id) }}"
             class="btn btn-outline-secondary btn-sm">Edit</i></a>
-        <form action="/knowledge-sources/{{ knowledge_source.id }}/delete" method="post"><button
+        <form action="{{ url_for('idealog.delete_knowledge_source', knowledge_source_id=knowledge_source.id) }}" method="post"><button
                 class="btn btn-outline-secondary btn-sm">Delete</button></form>
     </div>
     <h3>Description: </h3>
@@ -24,7 +24,7 @@
     <h3>Knowledge Domains:</h3>
     <ul>
         {% for knowledge_domain in knowledge_source.knowledge_domains %}
-        <li><a href="/knowledge-domains/{{ knowledge_domain.id }}">{{ knowledge_domain.name }}</a></li>
+        <li><a href="{{ url_for('idealog.detail_knowledge_domain', knowledge_domain_id=knowledge_domain.id) }}">{{ knowledge_domain.name }}</a></li>
         {% endfor %}
     </ul>
 

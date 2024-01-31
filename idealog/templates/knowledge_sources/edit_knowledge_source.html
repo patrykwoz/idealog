@@ -16,7 +16,7 @@
       {% endfor %}
 
       <button class="btn btn-primary btn-lg btn-block">Make Changes.</button>
-      <a href="/knowledge-sources" class="btn btn-outline-secondary btn-sm">Cancel.</a>
+      <a href="{{ url_for('idealog.render_all_knowledge_sources') }}" class="btn btn-outline-secondary btn-sm">Cancel.</a>
     </form>
   </div>
 </div>

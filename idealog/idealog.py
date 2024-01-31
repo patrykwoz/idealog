@@ -83,7 +83,6 @@ def add_new_idea():
                 user_id=g.user.id
             )
             
-
             db.session.add(idea)
             db.session.commit()
             flash("Successfully added a new idea.", "success")
@@ -131,7 +130,6 @@ def edit_idea(idea_id):
 
     return render_template('ideas/edit_idea.html', form=form)
 
-
 @bp.route('/ideas/<int:idea_id>/delete', methods=["POST"])
 @requires_login
 def delete_idea(idea_id):
@@ -140,7 +138,6 @@ def delete_idea(idea_id):
     db.session.commit()
 
     return redirect(url_for('idealog.render_all_ideas'))
-
 
 ##############################################################################
 # General Group web routes (web pages).
@@ -168,12 +165,10 @@ def add_new_group():
     if form.validate_on_submit():
         
         try:
-
             group = Group(
                 name=form.name.data,
                 user_id = g.user.id
             )
-            
 
             db.session.add(group)
             db.session.commit()
@@ -184,7 +179,6 @@ def add_new_group():
         return redirect(url_for('idealog.render_all_groups'))
 
     return render_template('groups/new_group.html', form=form)
-
 
 @bp.route('/idea-groups/<int:group_id>/edit', methods=["GET", "POST"])
 @requires_login
@@ -215,8 +209,6 @@ def delete_group(group_id):
 
     return redirect(url_for('idealog.render_all_groups'))
 
-
-
 ##############################################################################
 # General KNOWLEDGE SOURCE web routes (web pages).
 @bp.route('/knowledge-sources', methods=["GET"])
@@ -233,7 +225,6 @@ def render_all_knowledge_sources():
 @requires_login
 def detail_knowledge_source(knowledge_source_id):
     knowledge_source = KnowledgeSource.query.get_or_404(knowledge_source_id)
-
 
     return render_template('knowledge_sources/detail_knowledge_source.html', knowledge_source=knowledge_source)
 
@@ -288,7 +279,6 @@ def add_new_knowledge_source_internet():
 def add_new_knowledge_source_files():
     return render_template('knowledge_sources/new_knowledge_source.html', form=form)
 
-
 @bp.route('/knowledge-sources/<int:knowledge_source_id>/edit', methods=["GET", "POST"])
 @requires_login
 def edit_knowledge_source(knowledge_source_id):
@@ -297,7 +287,6 @@ def edit_knowledge_source(knowledge_source_id):
     form = KnowledgeSourceAddForm(obj=knowledge_source)
 
     form.knowledge_domains.choices = [(knowledge_domain.id, knowledge_domain.name) for knowledge_domain in KnowledgeDomain.query.all()]
-
 
     if form.validate_on_submit():
         knowledge_domains_choices_ids = form.knowledge_domains.data
@@ -437,7 +426,6 @@ def add_new_knowledge_base():
     form.knowledge_sources.choices = [(knowledge_source.id, knowledge_source.name) for knowledge_source in KnowledgeSource.query.all()]
     form.knowledge_domains.choices = [(knowledge_domain.id, knowledge_domain.name) for knowledge_domain in KnowledgeDomain.query.all()]
 
-
     if form.validate_on_submit():
         try:
             knowledge_base = KnowledgeBase(
@@ -480,7 +468,6 @@ def add_new_knowledge_base():
                 flash("One or more selected groups do not exist.", "danger")
                 return render_template('knowledge_bases/new_knowledge_base.html', form=form)
             
-            
             ideas_from_groups=[]
             for idea_group in idea_groups:
                 ideas_from_groups.extend(idea_group.ideas)
@@ -510,7 +497,6 @@ def add_new_knowledge_base():
             
             for knowledge_domain in knowledge_domains:
                 knowledge_base.knowledge_domains.append(knowledge_domain)
-
 
             merged_ideas = ideas + knowledge_sources + ideas_from_groups + knowledge_sources_from_domains
             knowledge_base_class_object = class_kb.from_ideas_to_kb(merged_ideas,verbose=False)

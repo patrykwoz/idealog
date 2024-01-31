@@ -11,9 +11,9 @@
 <div class="user-profile-content-container">
     {% for group in groups %}
     <div class="card-contents">
-        <a href="/idea-groups/{{ group.id }}" class="card-link">{{ group.name }}</a>
-        <a href="/idea-groups/{{ group.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
-        <form action="/idea-groups/{{ group.id }}/delete" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+        <a href="{{ url_for('idealog.detail_group', group_id=group.id) }}" class="card-link">{{ group.name }}</a>
+        <a href="{{ url_for('idealog.edit_group', group_id=group.id) }}"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="{{ url_for('idealog.delete_group', group_id=group.id) }}" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
     </div>
 
 

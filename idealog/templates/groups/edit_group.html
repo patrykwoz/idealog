@@ -16,9 +16,9 @@
       {% endfor %}
 
       <button class="btn btn-primary btn-lg btn-block">Make Changes.</button>
-      <a href="/idea-groups" class="btn btn-outline-secondary btn-sm">Cancel.</a>
+      <a href="{{ url_for('idealog.render_all_groups') }}" class="btn btn-outline-secondary btn-sm">Cancel.</a>
     </form>
   </div>
 </div>
 
-{% endblock %}
+{% endblock %} 

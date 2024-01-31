@@ -10,36 +10,36 @@
 
 <div class="user-profile-content-container">
     <p>Name: {{ knowledge_base.name }}</p>
-    <a href="/knowledge-bases/{{ knowledge_base.id }}/edit" class="btn btn-outline-secondary btn-sm">Edit</i></a>
-    <form action="/knowledge-bases/{{ knowledge_base.id }}/delete" method="post"><button
+    <a href="{{ url_for('idealog.edit_knowledge_base', knowledge_base_id=knowledge_base.id) }}" class="btn btn-outline-secondary btn-sm">Edit</i></a>
+    <form action="{{ url_for('idealog.delete_knowledge_base', knowledge_base_id=knowledge_base.id) }}" method="post"><button
             class="btn btn-outline-secondary btn-sm">Delete</button></form>
     <p>Date created: {{ knowledge_base.date_created }}</p>
 
     <h3>Ideas:</h3>
     <ul>
         {% for idea in knowledge_base.ideas %}
-        <li><a href="/ideas/{{ idea.id }}">{{ idea.name }}</a></li>
+        <li><a href="{{ url_for('idealog.detail_idea', idea_id=idea.id) }}">{{ idea.name }}</a></li>
         {% endfor %}
     </ul>
 
     <h3>Groups:</h3>
     <ul>
         {% for idea_group in knowledge_base.idea_groups %}
-        <li><a href="/idea-groups/{{ idea_group.id }}">{{ idea_group.name }}</a></li>
+        <li><a href="{{ url_for('idealog.detail_group', group_id=group.id) }}">{{ idea_group.name }}</a></li>
         {% endfor %}
     </ul>
 
     <h3>Knowledge Sources:</h3>
     <ul>
         {% for knowledge_source in knowledge_base.knowledge_sources %}
-        <li><a href="/knowledge-sources/{{ knowledge_source.id }}">{{ knowledge_source.name }}</a></li>
+        <li><a href="{{ url_for('idealog.detail_knowledge_source', knowledge_source_id=knowledge_source.id) }}">{{ knowledge_source.name }}</a></li>
         {% endfor %}
     </ul>
 
     <h3>Knowledge Domains:</h3>
     <ul>
         {% for knowledge_domain in knowledge_base.knowledge_domains %}
-        <li><a href="/knowledge-domains/{{ knowledge_domain.id }}">{{ knowledge_domain.name }}</a></li>
+        <li><a href="{{ url_for('idealog.detail_knowledge_domain', knowledge_domain_id=knowledge_domain.id) }}">{{ knowledge_domain.name }}</a></li>
         {% endfor %}
     </ul>
 

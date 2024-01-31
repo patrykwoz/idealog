@@ -11,9 +11,9 @@
 <div class="user-profile-content-container graph-container">
     {% for knowledge_domain in knowledge_domains %}
     <div class="card-contents">
-        <a href="/knowledge-domains/{{ knowledge_domain.id }}" class="card-link">{{ knowledge_domain.name }}</a>
-        <a href="/knowledge-domains/{{ knowledge_domain.id }}/edit"><i class="fa-regular fa-pen-to-square"></i></a>
-        <form action="/knowledge-domains/{{ knowledge_domain.id }}/delete" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+        <a href="{{ url_for('idealog.detail_knowledge_domain', knowledge_domain_id=knowledge_domain.id) }}" class="card-link">{{ knowledge_domain.name }}</a>
+        <a href="{{ url_for('idealog.edit_knowledge_domain', knowledge_domain_id=knowledge_domain.id) }}"><i class="fa-regular fa-pen-to-square"></i></a>
+        <form action="{{ url_for('idealog.delete_knowledge_domain', knowledge_domain_id=knowledge_domain.id) }}" method="post" class="delete-form"><button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
     </div>
 
 

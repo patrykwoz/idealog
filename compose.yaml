@@ -7,30 +7,30 @@ services:
     restart: always
     ports:
       - 8080:8080
-    depends_on:
-      - redis
+    # depends_on:
+    #   - redis
     environment:
-      - DATABASE_URL=postgresql://beaver:password@host.docker.internal:5432/flaskr
-      - REDISCLOUD_URL=redis://localhost
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/idealog
+      # - REDISCLOUD_URL=redis://localhost
       - SECRET_KEY=devnotcompletelyrandomsecretkey
 
 
-  worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.celery
-    environment:
-      - DATABASE_URL=postgresql://beaver:password@host.docker.internal:5432/flaskr
-      - REDISCLOUD_URL=redis://localhost
-      - SECRET_KEY=devnotcompletelyrandomsecretkey
-      - CELERY_BROKER_URL=redis://redis
-      - CELERY_RESULT_BACKEND=redis://redis
-      - CELERY_TASK_IGNORE_RESULT=true
-    depends_on:
-      - redis
+  # worker:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.celery
+  #   environment:
+  #     - DATABASE_URL=postgresql://beaver:password@host.docker.internal:5432/flaskr
+  #     - REDISCLOUD_URL=redis://localhost
+  #     - SECRET_KEY=devnotcompletelyrandomsecretkey
+  #     - CELERY_BROKER_URL=redis://redis
+  #     - CELERY_RESULT_BACKEND=redis://redis
+  #     - CELERY_TASK_IGNORE_RESULT=true
+  #   depends_on:
+  #     - redis
 
 
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
+  # redis:
+  #   image: redis
+  #   ports:
+  #     - "6379:6379"

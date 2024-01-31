@@ -10,13 +10,13 @@
 
 <div class="user-profile-content-container">
     <p>Name: {{ group.name }}</p>
-    <a href="{{ url_for(idealog.edit_group, group_id=group.id) }}" class="btn btn-outline-secondary btn-sm">Edit</i></a>
-    <form action="{{ url_for(idealog.delete_group, group_id=group.id) }}" method="post"><button class="btn btn-outline-secondary btn-sm">Delete</button></form>
+    <a href="{{ url_for('idealog.edit_group', group_id=group.id) }}" class="btn btn-outline-secondary btn-sm">Edit</i></a>
+    <form action="{{ url_for('idealog.delete_group', group_id=group.id) }}" method="post"><button class="btn btn-outline-secondary btn-sm">Delete</button></form>
 
     <h3>Ideas in the Group:</h3>
     <ul>
         {% for idea in group.ideas %}
-        <li><a href="{{ url_for(idealog.detail_idea, idea_id = idea.id) }}">{{ idea.name }}</a></li>
+        <li><a href="{{ url_for('idealog.detail_idea', idea_id = idea.id) }}">{{ idea.name }}</a></li>
         {% endfor %}
     </ul>
 
