@@ -10,24 +10,34 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/idealog
       - SECRET_KEY=devnotcompletelyrandomsecretkey
-  #   depends_on:
-  #     - worker
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    depends_on:
+      - worker
 
-  # worker:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.celery
-  #   environment:
-  #     - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/idealog
-  #     - REDISCLOUD_URL=redis://localhost
-  #     - SECRET_KEY=devnotcompletelyrandomsecretkey
-  #     - CELERY_BROKER_URL=redis://redis
-  #     - CELERY_RESULT_BACKEND=redis://redis
-  #     - CELERY_TASK_IGNORE_RESULT=true
-  #   depends_on:
-  #     - redis
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/idealog
+      - REDISCLOUD_URL=redis://localhost
+      - SECRET_KEY=devnotcompletelyrandomsecretkey
+      - CELERY_BROKER_URL=redis://redis
+      - CELERY_RESULT_BACKEND=redis://redis
+      - CELERY_TASK_IGNORE_RESULT=true
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
 
-  # redis:
-  #   image: redis
-  #   ports:
-  #     - "6379:6379"
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
