@@ -1,9 +1,5 @@
 from flask import render_template
 
-
-##############################################################################
-# Error Pages
-
 def register_error_handlers(app):
     @app.errorhandler(401)
     def unauthorized(error):

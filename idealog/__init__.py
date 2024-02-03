@@ -1,55 +1,13 @@
 import os
-from functools import wraps
-from flask import (
-    Flask,
-    render_template,
-    request,
-    flash,
-    redirect,
-    session,
-    g,
-    send_file,
-)
-from celery.result import AsyncResult
-
-from sqlalchemy.exc import IntegrityError, PendingRollbackError
-from sqlalchemy import func
-
 from urllib.parse import urlparse
 import redis
-
+from flask import Flask, g, session
+from .models import db, User
+from .forms import UserAddForm, UserSignupForm, LoginForm, UserEditForm, IdeaAddForm, GroupAddForm, KnowledgeSourceAddForm, KnowledgeDomainAddForm, KnowledgeBaseAddForm, KnowledgeBaseEditForm
 from .celery_app import celery_init_app
-
-from .forms import (
-    UserAddForm,
-    UserSignupForm,
-    LoginForm,
-    UserEditForm,
-    IdeaAddForm,
-    GroupAddForm,
-    KnowledgeSourceAddForm,
-    KnowledgeDomainAddForm,
-    KnowledgeBaseAddForm,
-    KnowledgeBaseEditForm,
-)
-
-from .models import (
-    db,
-    connect_db,
-    User,
-    Idea,
-    Group,
-    KnowledgeSource,
-    KnowledgeDomain,
-    KnowledgeBase,
-)
-
-from . import users_bp, views, auth, idealog, api
-
 from .error_handler import register_error_handlers
-
 from .helpers import requires_login, requires_admin, do_login, do_logout, CURR_USER_KEY
-
+from . import users_bp, views, auth, idealog, api
 
 def create_app(test_config=None) -> Flask:
     app = Flask(__name__, instance_relative_config=True)

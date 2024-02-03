@@ -1,9 +1,5 @@
-from flask import (Flask,
-render_template, redirect, flash, session, g, request, jsonify, Blueprint,
-url_for)
-
+from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, Blueprint, url_for
 from .helpers import requires_login, requires_admin
-
 from idealog.models import db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
 from idealog.forms import UserEditForm, UserAddForm
 
@@ -11,7 +7,6 @@ bp = Blueprint('users_bp', __name__)
 
 ##############################################################################
 # General user web routes (pages):
-
 @bp.route('/users/profile', methods=["GET", "POST"])
 @requires_login
 def profile():
@@ -25,7 +20,7 @@ def profile():
         authenticate_user = User.authenticate(form.username.data, form.password.data)
         if authenticate_user:
             db.session.commit()
-            flash("Succesffully saved changes.", "success")
+            flash("Successfully saved changes.", "success")
         else:
             flash("Access unauthorized.", "danger")
             return redirect(url_for('views.homepage'))
@@ -36,32 +31,27 @@ def profile():
 
 ##############################################################################
 # Admin user web routes (pages):
-
-
 @bp.route('/users')
 @requires_login
 @requires_admin
 def list_users():
-    """Page with listing of users.    """
+    """Page with listing of users."""    
     users = User.query.all()
-
     return render_template('users/show_all_users.html', users=users)
 
 @bp.route('/users/<int:user_id>')
 @requires_login
 @requires_admin
 def user_show(user_id):
-    """Show user profile."""
-
+    """Show user profile."""    
     user = User.query.get_or_404(user_id)
-
     return render_template('users/detail_user.html', user=user)
 
 @bp.route('/users/new', methods=["GET","POST"])
 @requires_login
 @requires_admin
 def new_user():
-    """Handle user signup. """
+    """Handle user signup."""    
     form = UserAddForm()
     default_profile_img = 'images/default_profile_pic.jpg'
 
@@ -95,7 +85,7 @@ def new_user():
 @requires_login
 @requires_admin
 def edit_user(user_id):
-    """Edit user as an admin"""
+    """Edit user as an admin"""    
     user = User.query.get_or_404(user_id)
     form = UserEditForm(obj=user)
     if form.validate_on_submit():
@@ -105,7 +95,7 @@ def edit_user(user_id):
         user.password = User.hash_existing(form.password.data)
 
         db.session.commit()
-        flash("Succesffully saved changes.", "success")
+        flash("Successfully saved changes.", "success")
 
         return redirect(url_for('users_bp.user_show', user_id=user_id))
 
@@ -115,12 +105,13 @@ def edit_user(user_id):
 @requires_login
 @requires_admin
 def delete_user(user_id):
-    """Delete user."""
+    """Delete user."""    
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
 
     return redirect(url_for('users_bp.list_users'))
+
 ##############################################################################
 # General user search routes (pages)
 @bp.route('/search', methods=["GET"])
@@ -158,5 +149,4 @@ def search_results():
 @requires_login
 @requires_admin
 def render_admin_index():
-
     return redirect(url_for('users_bp.list_users'))

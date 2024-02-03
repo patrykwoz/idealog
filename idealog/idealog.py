@@ -1,36 +1,6 @@
-from flask import (
-    Flask,
-    render_template,
-    request,
-    flash,
-    redirect,
-    session,
-    g,
-    jsonify,
-    Blueprint,
-    url_for, 
-)
-
-from .models import (
-    db,
-    connect_db,
-    User,
-    Idea,
-    Group,
-    KnowledgeSource,
-    KnowledgeDomain,
-    KnowledgeBase,
-)
-
-from .forms import (
-    IdeaAddForm,
-    GroupAddForm,
-    KnowledgeSourceAddForm,
-    KnowledgeDomainAddForm,
-    KnowledgeBaseAddForm,
-    KnowledgeBaseEditForm,
-)
-
+from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, Blueprint, url_for
+from .models import db, connect_db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
+from .forms import IdeaAddForm, GroupAddForm, KnowledgeSourceAddForm, KnowledgeDomainAddForm, KnowledgeBaseAddForm, KnowledgeBaseEditForm
 from .ml_functions import class_kb
 from .helpers import requires_login, requires_admin
 
@@ -99,20 +69,17 @@ def edit_idea(idea_id):
     idea = Idea.query.get_or_404(idea_id)
 
     form = IdeaAddForm(obj=idea)
-
     form.idea_groups.choices = [(group.id, group.name) for group in Group.query.all()]
-
-    #form.idea_groups.data = [group.id for group in idea.groups]
 
     if form.validate_on_submit():
         groups_choices_ids = form.idea_groups.data
         if not isinstance(groups_choices_ids, list):
-                groups_choices_ids = [groups_choices_ids]
+            groups_choices_ids = [groups_choices_ids]
 
         groups = Group.query.filter(Group.id.in_(groups_choices_ids)).all()
         if len(groups) != len(groups_choices_ids):
             flash("One or more selected groups do not exist.", "danger")
-            return render_template('ideas/new_idea.html', form=form)
+            return render_template('ideas/edit_idea.html', form=form)
 
         idea.name = form.name.data
         idea.text = form.text.data
@@ -124,8 +91,10 @@ def edit_idea(idea_id):
 
         try:
             db.session.commit()
-        except(e):
+            flash("Successfully updated the idea.", "success")
+        except Exception as e:
             flash(f"Something went wrong. Here's your error: {e}", "danger")
+        
         return redirect(url_for('idealog.render_all_ideas'))
 
     return render_template('ideas/edit_idea.html', form=form)
@@ -169,7 +138,6 @@ def add_new_group():
                 name=form.name.data,
                 user_id = g.user.id
             )
-
             db.session.add(group)
             db.session.commit()
             flash("Successfully added a new group.", "success")
@@ -327,7 +295,6 @@ def delete_knowledge_source(knowledge_source_id):
 
 ##############################################################################
 # General KNOWLEDGE DOMAIN web routes (web pages).
-
 @bp.route('/knowledge-domains', methods=["GET"])
 @requires_login
 def render_all_knowledge_domains():
@@ -390,7 +357,6 @@ def delete_knowledge_domain(knowledge_domain_id):
 
 ##############################################################################
 # General KNOWLEDGE BASE web routes (web pages).
-
 @bp.route('/knowledge-bases', methods=["GET"])
 @requires_login
 def render_all_knowledge_bases():

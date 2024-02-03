@@ -1,20 +1,10 @@
-from flask import (
-    Flask,
-    render_template,
-    request, flash, redirect, session, g,
-    Blueprint,
-    url_for
-)
-
+from flask import Flask, render_template, request, flash, redirect, session, g, Blueprint, url_for
 from .helpers import requires_login, requires_admin, do_login, do_logout
 from sqlalchemy.exc import IntegrityError, PendingRollbackError
 from .models import db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
 from .forms import UserSignupForm, LoginForm
 
 bp = Blueprint('auth', __name__)
-
-##############################################################################
-# User signup/login/logout
 
 @bp.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -70,4 +60,3 @@ def logout():
 
     do_logout()
     return redirect(url_for('views.homepage'))
-

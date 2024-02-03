@@ -5,7 +5,7 @@
   <div class="row justify-content-md-center">
     <div class="col-md-12">
       <h2 class="join-message">Create new user.</h2>
-      <form action="/users/new" method="POST">
+      <form action="{{ url_for('users_bp.new_user') }}" method="POST">
         {{ form.hidden_tag() }}
 
         {% for field in form if field.widget.input_type != 'hidden' and field.name != 'password' %}
@@ -26,7 +26,7 @@
 
         <div class="edit-btn-area">
           <button class="btn btn-success">Create a new user!</button>
-          <a href="/users" class="btn btn-outline-secondary">Cancel</a>
+          <a href="{{ url_for('users_bp.list_users') }}" class="btn btn-outline-secondary">Cancel</a>
         </div>
       </form>
     </div>

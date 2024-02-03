@@ -22,7 +22,6 @@ def homepage():
 
 ##############################################################################
 # Docs page
-
 @bp.route('/docs')
 def documentation_page():
     """Show docs page."""

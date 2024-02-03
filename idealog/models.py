@@ -7,7 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
-
 class User(db.Model):
     """User in the system."""
 
@@ -70,7 +69,6 @@ class User(db.Model):
 
 class Idea(db.Model):
     """User's idea model."""
-
     __tablename__ = 'ideas'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -97,7 +95,6 @@ class Idea(db.Model):
 
 class Group(db.Model):
     """Ideas group model."""
-
     __tablename__ = 'groups'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -107,13 +104,11 @@ class Group(db.Model):
 
     user = db.relationship('User', backref='groups')
     
-
     def __repr__(self):
         return f"<Group #{self.id}: {self.name}>"
 
 class Artifact(db.Model):
     """Idea's artifact model."""
-
     __tablename__ = 'artifacts'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -138,8 +133,7 @@ class Artifact(db.Model):
 
 class KnowledgeSource(db.Model):
     """
-    Knowledge source model.
-
+    Knowledge source model
     It's similar to ideas but it includes "ideas" extracted from published paper, internet articles, other sources, etc.
     It usually is a bigger chunk of information.
     """
@@ -169,7 +163,6 @@ class KnowledgeSource(db.Model):
 
 class KnowledgeDomain(db.Model):
     """Knowledge domain model. Similar to the idea's group."""
-
     __tablename__ = 'knowledge_domains'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -179,7 +172,6 @@ class KnowledgeDomain(db.Model):
 
     user = db.relationship('User', backref='knowledge_domains')
     
-
     def __repr__(self):
         return f"<Knowledge Domain #{self.id}: {self.name}>"
 
@@ -225,7 +217,6 @@ class UserKnowledgeBase(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     knowledge_base_id = db.Column(db.Integer, db.ForeignKey('knowledge_bases.id', ondelete="CASCADE"))
 
-
 class UserKnowledgeSource(db.Model):
     """Storing relationships between users and knowledge sources"""
     __tablename__ = 'user_knowledge_sources'
@@ -233,7 +224,6 @@ class UserKnowledgeSource(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     knowledge_base_id = db.Column(db.Integer, db.ForeignKey('knowledge_sources.id', ondelete="CASCADE"))
-
 
 class IdeaGroup(db.Model):
     """Storing relationships between ideas and idea groups"""
@@ -301,10 +291,7 @@ class IdeaTag(db.Model):
     idea_id = db.Column(db.Integer, db.ForeignKey('ideas.id', ondelete="CASCADE"))
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE"))
 
-
-
 def connect_db(app):
     """Connect this database to provided Flask app."""
-
     db.app = app
     db.init_app(app)
