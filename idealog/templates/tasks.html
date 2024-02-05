@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Tasks</h1>
+<p>This is for celery testing.</p>
+<div class="row justify-content-md-center">
+    <div class="col-md-12 col-lg-12">
+        <form action="{{ url_for('views.add')}}" method="post">
+            <label for="a">Number A:</label>
+            <input type="number" name="a" id="a">
+            <label for="b">Number B:</label>
+            <input type="number" name="b" id="b">
+
+            <button>add</button>
+        </form>
+    </div>
+</div>
+
+<div class="row justify-content-md-center">
+    <div class="col-md-12 col-lg-12">
+        <h2 class="form-header">Add a new knowledge base.</h2>
+        <form action="{{ url_for('idealog.add_new_knowledge_base_celery') }}" method="POST" id="new-knowledge-base-form">
+            {{ form.hidden_tag() }}
+
+            {% for field in form if field.widget.input_type != 'hidden' %}
+            {% for error in field.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+            {{ field.label.text }}
+            {{ field(placeholder=field.label.text, class="form-control") }}
+            {% endfor %}
+
+            <button class="btn btn-primary btn-lg btn-block">Add a new knowledge base.</button>
+            <a href="{{ url_for('idealog.render_all_knowledge_bases') }}"
+                class="btn btn-outline-secondary btn-sm">Cancel.</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

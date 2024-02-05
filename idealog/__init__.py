@@ -12,34 +12,34 @@ from . import users_bp, views, auth, idealog, api
 def create_app(test_config=None) -> Flask:
     app = Flask(__name__, instance_relative_config=True)
 
-    DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql:///idealog')
+    # DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql:///idealog')
 
-    if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    # if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    #     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-    url = urlparse(os.environ.get('REDISCLOUD_URL', 'redis://localhost'))
-    r = redis.Redis(host=url.hostname, port=url.port, password=url.password)
+    # url = urlparse(os.environ.get('REDISCLOUD_URL', 'redis://localhost'))
+    # r = redis.Redis(host=url.hostname, port=url.port, password=url.password)
 
-    app.config.from_mapping(
-        SECRET_KEY=os.environ.get('SECRET_KEY', 'devnotcompletelyrandomsecretkey'),
-        SQLALCHEMY_DATABASE_URI=DATABASE_URL,
-        CELERY=dict(
-            broker_url=os.environ.get('REDISCLOUD_URL', 'redis://localhost'),
-            result_backend=os.environ.get('REDISCLOUD_URL', 'redis://localhost'),
-            task_ignore_result=True,
-        ),
-    )
+    # app.config.from_mapping(
+    #     SECRET_KEY=os.environ.get('SECRET_KEY', 'devnotcompletelyrandomsecretkey'),
+    #     SQLALCHEMY_DATABASE_URI=DATABASE_URL,
+    #     CELERY=dict(
+    #         broker_url=os.environ.get('REDISCLOUD_URL', 'redis://localhost'),
+    #         result_backend=os.environ.get('REDISCLOUD_URL', 'redis://localhost'),
+    #         task_ignore_result=True,
+    #     ),
+    # )
     
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_ECHO'] = False
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # app.config['SQLALCHEMY_ECHO'] = False
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
     app.config['FLASK_ENV'] = os.environ.get('FLASK_ENV', 'development')
     app.config['FLASK_DEBUG'] = os.environ.get('FLASK_DEBUG', True)
 
     app.config.from_prefixed_env()
-    celery_app = celery_init_app(app)
+    # celery_app = celery_init_app(app)
 
-    db.init_app(app)
+    # db.init_app(app)
 
     #if i wannt to keep app.before_request in a separate file and register it here - how to do it?
     @app.before_request

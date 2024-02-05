@@ -3,6 +3,7 @@ from .models import db, connect_db, User, Idea, Group, KnowledgeSource, Knowledg
 from .forms import IdeaAddForm, GroupAddForm, KnowledgeSourceAddForm, KnowledgeDomainAddForm, KnowledgeBaseAddForm, KnowledgeBaseEditForm
 from .ml_functions import class_kb
 from .helpers import requires_login, requires_admin
+from . import tasks
 
 bp = Blueprint('idealog', __name__)
 
@@ -478,6 +479,101 @@ def add_new_knowledge_base():
             flash(f"Something went wrong. Here's your error: {e}", "danger")
         return redirect(url_for('idealog.render_all_knowledge_bases'))
     return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+
+@bp.route('/knowledge-bases/newkbworker', methods=["GET", "POST"])
+@requires_login
+@requires_admin
+def add_new_knowledge_base_celery():
+    """This is the same as add_new_knowledge_base but it uses celery to create the knowledge base."""
+    form = KnowledgeBaseAddForm()
+
+    form.ideas.choices = [(idea.id, idea.name) for idea in Idea.query.all()]
+    form.idea_groups.choices = [(group.id, group.name) for group in Group.query.all()]
+    form.knowledge_sources.choices = [(knowledge_source.id, knowledge_source.name) for knowledge_source in KnowledgeSource.query.all()]
+    form.knowledge_domains.choices = [(knowledge_domain.id, knowledge_domain.name) for knowledge_domain in KnowledgeDomain.query.all()]
+
+    if form.validate_on_submit():
+        try:
+            knowledge_base = KnowledgeBase(
+                name=form.name.data,
+                user_id = g.user.id,
+                status = 'pending'
+            )
+            
+            ideas_choices_ids = form.ideas.data
+            if not isinstance(ideas_choices_ids, list):
+                ideas_choices_ids = [ideas_choices_ids]
+
+            ideas = Idea.query.filter(Idea.id.in_(ideas_choices_ids)).all()
+            if len(ideas) != len(ideas_choices_ids):
+                flash("One or more selected ideas do not exist.", "danger")
+                return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+            
+            for idea in ideas:
+                knowledge_base.ideas.append(idea)
+            
+            knowledge_sources_choices_ids = form.knowledge_sources.data
+            if not isinstance(knowledge_sources_choices_ids, list):
+                knowledge_sources_choices_ids = [knowledge_sources_choices_ids]
+
+            knowledge_sources = KnowledgeSource.query.filter(KnowledgeSource.id.in_(knowledge_sources_choices_ids)).all()
+            if len(knowledge_sources) != len(knowledge_sources_choices_ids):
+                flash("One or more selected knowledgesources do not exist.", "danger")
+                return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+            
+            for knowledge_source in knowledge_sources:
+                knowledge_base.knowledge_sources.append(knowledge_source)
+            
+            #Ideas from groups
+            idea_groups_choices_ids = form.idea_groups.data
+            if not isinstance(idea_groups_choices_ids, list):
+                idea_groups_choices_ids = [idea_groups_choices_ids]
+            
+            idea_groups = Group.query.filter(Group.id.in_(idea_groups_choices_ids)).all()
+            if len(idea_groups) != len(idea_groups_choices_ids):
+                flash("One or more selected groups do not exist.", "danger")
+                return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+            
+            ideas_from_groups=[]
+            for idea_group in idea_groups:
+                ideas_from_groups.extend(idea_group.ideas)
+            
+            for idea in ideas_from_groups:
+                knowledge_base.ideas.append(idea)
+
+            for idea_group in idea_groups:
+                knowledge_base.idea_groups.append(idea_group)
+            
+            #Knowledge Sources from Knowledge Domains
+            knowledge_domains_choices_ids = form.knowledge_domains.data
+            if not isinstance(knowledge_domains_choices_ids, list):
+                knowledge_domains_choices_ids = [knowledge_domains_choices_ids]
+            
+            knowledge_domains = KnowledgeDomain.query.filter(KnowledgeDomain.id.in_(knowledge_domains_choices_ids)).all()
+            if len(knowledge_domains) != len(knowledge_domains_choices_ids):
+                flash("One or more selected knowledge domains do not exist.", "danger")
+                return render_template('knowledge_bases/new_knowledge_base.html', form=form)
+            
+            knowledge_sources_from_domains=[]
+            for knowledge_domain in knowledge_domains:
+                knowledge_sources_from_domains.extend(knowledge_domain.knowledge_sources)
+            
+            for knowledge_source in knowledge_sources_from_domains:
+                knowledge_base.knowledge_sources.append(knowledge_source)
+            
+            for knowledge_domain in knowledge_domains:
+                knowledge_base.knowledge_domains.append(knowledge_domain)
+
+            db.session.add(knowledge_base)
+            db.session.commit()
+
+            result = tasks.create_kb.delay(knowledge_base.id)
+
+            flash("Successfully added a new knowledge_base.", "success")
+        except Exception as e:
+            flash(f"Something went wrong. Here's your error: {e}", "danger")
+        return redirect(url_for('idealog.render_all_knowledge_bases'))
+    return render_template('tasks.html', form=form)
 
 @bp.route('/knowledge-bases/<int:knowledge_base_id>/edit', methods=["GET", "POST"])
 @requires_login
