@@ -41,6 +41,6 @@ coverage html # open htmlcov/index.html in a browser
 This isn't an example of a properly architected perfectly designed distributed app. It's a simple example and a learning exercise. 
 
 ## Next Steps
-* Make this backed more robust
-* Deal with celery memory leaks
-* Develop proper fronted in Springboard Capstone 2
+* Improve the robustness of this backend.
+* Addreess any potential celery memory leaks.
+* Develop a proper fronted in Springboard Capstone 2.
