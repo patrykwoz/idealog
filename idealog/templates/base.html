@@ -44,10 +44,10 @@
                 </a>
             </div>
 
-            <form class="d-flex" role="search" action="{{ url_for('users_bp.search_results') }}" method="get">
-                <input class="form-control me-2 search-idealog" type="search" name="home-query"
+            <form class="d-flex search-bar-idealog" role="search" action="{{ url_for('users_bp.search_results') }}" method="get">
+                <input class="form-control me-2 search-idealog search-bar-idealog" type="search" name="home-query"
                     placeholder="Search ideas, knowledge sources, knowledge graphs..." aria-label="Search">
-                <button hidden class="idealog-btn" type="submit">Search</button>
+                <button hidden class="idealog-btn search-bar-idealog" type="submit">Search</button>
             </form>
 
             <a href="{{ url_for('views.documentation_page') }}" class="idealog-btn">Docs</a>

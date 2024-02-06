@@ -3,3 +3,6 @@ prototypes/buildingKB/__pycache__
 venv
 __pycache__
 helpers/ml_functions/__pycache__
+.gitignore
+.dockerignore
+.coverage

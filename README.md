@@ -19,9 +19,9 @@ docker compose up
 
 ## Architecture
 * A front-end web app in Flask Python which let's users add ideas to the db, create relationships between ideas, group them and finally create knowledge bases from selected ideas and knowledge sources.
-* A Redis message broker
-* Postgres SQL database
-* Celery worker performing performance have tasks asynchronously
+* A Redis message broker.
+* Postgres SQL database.
+* Celery worker performing performance heavy tasks asynchronously.
 
 ## Test
 ```
@@ -42,5 +42,5 @@ This isn't an example of a properly architected perfectly designed distributed a
 
 ## Next Steps
 * Improve the robustness of this backend.
-* Addreess any potential celery memory leaks.
+* Address any potential celery memory leaks.
 * Develop a proper fronted in Springboard Capstone 2.
