@@ -291,7 +291,7 @@ class IdeaTag(db.Model):
     idea_id = db.Column(db.Integer, db.ForeignKey('ideas.id', ondelete="CASCADE"))
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE"))
 
-def connect_db(app):
-    """Connect this database to provided Flask app."""
-    db.app = app
-    db.init_app(app)
+# def connect_db(app):
+#     """Connect this database to provided Flask app."""
+#     db.app = app
+#     db.init_app(app)

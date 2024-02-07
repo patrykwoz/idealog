@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, Blueprint, url_for
-from .models import db, connect_db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
+from .models import db, User, Idea, Group, KnowledgeSource, KnowledgeDomain, KnowledgeBase
 from .forms import IdeaAddForm, GroupAddForm, KnowledgeSourceAddForm, KnowledgeDomainAddForm, KnowledgeBaseAddForm, KnowledgeBaseEditForm
 from .ml_functions import class_kb
 from .helpers import requires_login, requires_admin

@@ -1,19 +1,18 @@
 import os
-from sqlalchemy import create_engine, event, text
-from sqlalchemy.orm import sessionmaker, scoped_session
+import psycopg2
+from sqlalchemy import text
 import pytest
 from idealog import create_app
 from idealog.models import db as _db
 
 @pytest.fixture
-def app():
+def app(test_db):
     """Configure and yield a Flask app with a test database."""
     app = create_app({
         'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'postgresql://postgres:postgres@localhost/idealogtestdb',
+        'SQLALCHEMY_DATABASE_URI': f'postgresql://postgres:postgres@localhost/{test_db}',
+        'DATABASE_URL': f'postgresql://postgres:postgres@localhost/{test_db}',
     })
-
-    _db.init_app(app)
 
     with app.app_context():
         _db.create_all()
@@ -75,24 +74,67 @@ def session(app):
 @pytest.fixture(scope="module")
 def test_db():
     """Fixture to create a test database and dispose of it after testing."""
-    engine = create_engine('postgresql://postgres:postgres@localhost/idealogtestdb')
-    _db.metadata.create_all(engine)
+    # Create a new test database
+    test_db_name = 'idealogtestdb_test'
+    conn = psycopg2.connect(
+        dbname='postgres',
+        user='postgres',
+        password='postgres',
+        host='localhost'
+    )
+    conn.autocommit = True
+    cur = conn.cursor()
+    cur.execute(f"DROP DATABASE IF EXISTS {test_db_name}")
+    cur.execute(f"CREATE DATABASE {test_db_name}")
+    cur.close()
+    conn.close()
 
-    yield engine
+    # Yield the test database name
+    yield test_db_name
 
-    _db.metadata.drop_all(engine)
-    engine.dispose()
+    # Drop the test database after ensuring no active connections
+    conn = psycopg2.connect(
+        dbname='postgres',
+        user='postgres',
+        password='postgres',
+        host='localhost'
+    )
+    conn.autocommit = True
+    cur = conn.cursor()
+    # Terminate all other sessions accessing the database
+    cur.execute(f"""
+        SELECT pg_terminate_backend(pid) 
+        FROM pg_stat_activity 
+        WHERE datname = '{test_db_name}' AND pid <> pg_backend_pid()
+    """)
+    cur.close()
+
+    # Now drop the database
+    cur = conn.cursor()
+    cur.execute(f"DROP DATABASE IF EXISTS {test_db_name}")
+    cur.close()
+    conn.close()
 
 @pytest.fixture
 def db_session(test_db):
     """Provide a session for the test database."""
-    connection = test_db.connect()
-    transaction = connection.begin()
-    Session = sessionmaker(bind=test_db)
-    session = Session(bind=connection)
+    # Create a connection to the test database
+    conn = psycopg2.connect(
+        dbname=test_db, 
+        user='postgres', 
+        password='postgres', 
+        host='localhost'
+    )
+    conn.autocommit = True
+
+    # Create a transaction and session
+    transaction = conn.begin()
+    Session = sessionmaker(bind=conn)
+    session = Session()
 
     yield session
 
+    # Rollback transaction and close connection
     session.close()
     transaction.rollback()
-    connection.close()
+    conn.close()

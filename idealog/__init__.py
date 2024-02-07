@@ -39,6 +39,9 @@ def create_app(test_config=None) -> Flask:
     app.config.from_prefixed_env()
     celery_app = celery_init_app(app)
 
+    if test_config is not None:
+        app.config.from_mapping(test_config)
+
     db.init_app(app)
 
     #if i wannt to keep app.before_request in a separate file and register it here - how to do it?
