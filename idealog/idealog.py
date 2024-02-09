@@ -240,13 +240,13 @@ def add_new_knowledge_source():
 @requires_login
 @requires_admin
 def add_new_knowledge_source_internet():
-    return render_template('knowledge_sources/new_knowledge_source.html', form=form)
+    return redirect(url_for('views.homepage'))
 
 @bp.route('/knowledge-sources/new-from-files', methods=["GET", "POST"])
 @requires_login
 @requires_admin
 def add_new_knowledge_source_files():
-    return render_template('knowledge_sources/new_knowledge_source.html', form=form)
+    return redirect(url_for('views.homepage'))
 
 @bp.route('/knowledge-sources/<int:knowledge_source_id>/edit', methods=["GET", "POST"])
 @requires_login

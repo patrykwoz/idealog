@@ -12,9 +12,11 @@
     {% for idea in ideas %}
     <div class="list-group-item list-group-item-action">
         <a href="{{ url_for('idealog.detail_idea', idea_id=idea.id) }}">{{ idea.name }}</a>
+        {% if g.user.user_type=='admin' or g.user.id == idea.user_id %}
         <a href="{{ url_for('idealog.edit_idea', idea_id=idea.id) }}"><i class="fa-regular fa-pen-to-square"></i></a>
         <form action="{{ url_for('idealog.delete_idea', idea_id=idea.id) }}" method="post" class="delete-form"><button class="delete-btn"><i
                     class="fa-regular fa-trash-can"></i></button></form>
+        {% endif %}
     </div>
     {% endfor %}
     {% endif %}
@@ -30,9 +32,11 @@
     {% for group in groups %}
     <div class="list-group-item list-group-item-action">
         <a href="{{ url_for('idealog.detail_group', group_id=group.id) }}">{{ group.name }}</a>
+        {% if g.user.user_type=='admin' or g.user.id == group.user_id %}
         <a href="{{ url_for('idealog.edit_group', group_id=group.id) }}"><i class="fa-regular fa-pen-to-square"></i></a>
         <form action="{{ url_for('idealog.delete_group', group_id=group.id) }}" method="post" class="delete-form"><button
                 class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+        {% endif %}
     </div>
     {% endfor %}
     {% endif %}
@@ -48,10 +52,15 @@
     {% for knowledge_source in knowledge_sources %}
     <div class="list-group-item list-group-item-action">
         <a href="{{ url_for('idealog.detail_knowledge_source', knowledge_source_id=knowledge_source.id) }}">{{
-            knowledge_source.name }}</a>
+            knowledge_source.name }}
+        </a>  
+        {% if g.user.user_type=='admin' or g.user.id == knowledge_source.user_id %}
         <a href="{{ url_for('idealog.edit_knowledge_source', knowledge_source_id=knowledge_source.id) }}"><i class="fa-regular fa-pen-to-square"></i></a>
         <form action="{{ url_for('idealog.delete_knowledge_source', knowledge_source_id=knowledge_source.id) }}" method="post" class="delete-form"><button
-                class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+                class="delete-btn"><i class="fa-regular fa-trash-can"></i></button>
+        </form>
+        {% endif %}
+
     </div>
     {% endfor %}
     {% endif %}
@@ -68,9 +77,12 @@
     <div class="list-group-item list-group-item-action">
         <a href="{{ url_for('idealog.detail_knowledge_domain', knowledge_domain_id=knowledge_domain.id) }}">{{
             knowledge_domain.name }}</a>
+        
+        {% if g.user.user_type=='admin' or g.user.id == knowledge_domain.user_id %}
         <a href="{{ url_for('idealog.edit_knowledge_domain', knowledge_domain_id=knowledge_domain.id) }}"><i class="fa-regular fa-pen-to-square"></i></a>
         <form action="{{ url_for('idealog.delete_knowledge_domain', knowledge_domain_id=knowledge_domain.id) }}" method="post" class="delete-form"><button
                 class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+        {% endif %}
     </div>
     {% endfor %}
     {% endif %}
@@ -87,9 +99,11 @@
     <div class="list-group-item list-group-item-action">
         <a href="{{ url_for('idealog.detail_knowledge_base', knowledge_base_id=knowledge_base.id) }}">{{
             knowledge_base.name }}</a>
+        {% if g.user.user_type=='admin' or g.user.id == knowledge_base.user_id %}
         <a href="{{ url_for('idealog.edit_knowledge_base', knowledge_base_id=knowledge_base.id) }}"><i class="fa-regular fa-pen-to-square"></i></a>
         <form action="{{ url_for('idealog.delete_knowledge_base', knowledge_base_id=knowledge_base.id) }}" method="post" class="delete-form"><button
                 class="delete-btn"><i class="fa-regular fa-trash-can"></i></button></form>
+        {% endif %}
     </div>
     {% endfor %}
     {% endif %}

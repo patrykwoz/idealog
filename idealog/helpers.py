@@ -17,7 +17,7 @@ def requires_login(view_func):
     @wraps(view_func)
     def wrapper(*args, **kwargs):
         if not g.user:
-            flash("Access unauthorized.", "danger")
+            flash("Access unauthorized. Login to proceed.", "danger")
             return redirect(url_for('views.homepage'))
         return view_func(*args, **kwargs)
     return wrapper      

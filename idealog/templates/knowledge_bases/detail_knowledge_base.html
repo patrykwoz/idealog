@@ -25,7 +25,7 @@
     <h3>Groups:</h3>
     <ul>
         {% for idea_group in knowledge_base.idea_groups %}
-        <li><a href="{{ url_for('idealog.detail_group', group_id=group.id) }}">{{ idea_group.name }}</a></li>
+        <li><a href="{{ url_for('idealog.detail_group', group_id=idea_group.id) }}">{{ idea_group.name }}</a></li>
         {% endfor %}
     </ul>
 
