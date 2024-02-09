@@ -6,6 +6,6 @@ def test_config():
     assert create_app({"TESTING": True}).testing
 
 def test_hello(client):
-    response = client.get("/docs")
+    response = client.get("/")
     assert response.status_code == 200
-    assert b"docs" in response.data
+    assert b"Trending" in response.data
