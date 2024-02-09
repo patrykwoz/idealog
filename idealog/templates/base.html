@@ -50,9 +50,12 @@
                 <button hidden class="idealog-btn search-bar-idealog" type="submit">Search</button>
             </form>
 
-            <a href="{{ url_for('views.documentation_page') }}" class="idealog-btn">Docs</a>
+            
 
             <div class="user-navigation">
+                {% if g.user.user_type=='admin' %}
+                <a href="{{ url_for('views.documentation_page') }}" class="idealog-btn">Docs</a>
+                {% endif %}
 
                 {% if not g.user %}
                 <a href="{{ url_for('auth.signup') }}" class="idealog-btn">Signup</a>

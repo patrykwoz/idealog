@@ -19,9 +19,11 @@
     <div class="user-object-card">
         <p><i class="fa-solid fa-book"></i> Knowledge Sources</p>
         <p>Count: {{ g.user.knowledge_sources | length }}</p>
-        <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('idealog.add_new_knowledge_source') }}">Add New Manually</a>
+        <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('idealog.add_new_knowledge_source') }}">Add New</a>
+        {% if g.user.user_type == 'admin' %}
         <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('idealog.add_new_knowledge_source_internet') }}">Add New From Internet <i class="fa-solid fa-robot"></i></a>
         <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('idealog.add_new_knowledge_source_files') }}">Add New From File(s) <i class="fa-solid fa-robot"></i></a>
+        {% endif %}
         <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('idealog.render_all_knowledge_sources') }}">Show All</a>
     </div>
     <div class="user-object-card">
@@ -33,8 +35,10 @@
     <div class="user-object-card">
         <p><i class="fa-solid fa-brain"></i> Knowledge Bases</p>
         <p>Count: {{ g.user.knowledge_bases | length }}</p>
+        {% if g.user.user_type == 'admin' %}
         <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('idealog.add_new_knowledge_base') }}">Add New</a>
         <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('idealog.merge_knowledge_bases') }}">Merge</a>
+        {% endif %}
         <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('idealog.render_all_knowledge_bases') }}">Show All</a>
     </div>
 

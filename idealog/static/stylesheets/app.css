@@ -78,7 +78,7 @@ button.idealog-btn{
 
 
 .navbar-header a{
-    height: 30px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -385,5 +385,14 @@ button.idealog-btn{
 @media(max-width: 1100px) {
     .search-bar-idealog{
         display: none;
+    }
+}
+
+@media(max-width: 500px) {
+    .user-navigation > .idealog-btn{
+        font-size: smaller;
+        width: 60px;
+        height: 27px;
+        border: 2px solid black;
     }
 }

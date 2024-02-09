@@ -92,6 +92,7 @@ def edit_user(user_id):
         user.username = form.username.data
         user.email = form.email.data
         user.image_url = form.image_url.data
+        user.user_type = form.user_type.data
         user.password = User.hash_existing(form.password.data)
 
         db.session.commit()

@@ -20,7 +20,7 @@ def signup():
                 password=form.password.data,
                 email=form.email.data,
                 image_url=form.image_url.data or default_profile_img,
-                user_type='admin'
+                user_type=form.user_type.data
             )
             db.session.commit()
 
