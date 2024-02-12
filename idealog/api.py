@@ -32,7 +32,7 @@ def return_knowledge_base_json(knowledge_base_id):
 def return_latest_knowledge_base_json():
     """Return a Knowledge Base JSON object if processing of KB has been completed(status = 'ready')."""
     content = request.args.get('content')
-    
+
     if content == 'latest':
         knowledge_base = KnowledgeBase.query.order_by(KnowledgeBase.id.desc()).first()
         if knowledge_base:
