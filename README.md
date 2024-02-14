@@ -37,6 +37,41 @@ coverage report
 coverage html # open htmlcov/index.html in a browser
 ```
 
+## To Develop Locally without Docker
+
+Create the database
+```
+sudo postgres psql
+
+createdb idealog
+```
+
+After creating and activaing virtual environment.
+
+```
+pip install -r requirements.txt
+```
+
+Create tables and seed the database using ipython
+
+```
+%run app.py
+%run seed.py
+```
+Start redis
+```
+redis-server
+```
+Start the celery worker
+```
+celery -A make_celery worker --loglevel=info
+```
+Start the Flask app
+```
+flask run
+```
+
+
 ## Notes
 This isn't an example of a properly architected perfectly designed distributed app. It's a simple example and a learning exercise. 
 
